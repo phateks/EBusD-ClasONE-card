@@ -9,7 +9,7 @@ const dev = process.env.ROLLUP_WATCH;
 export default {
   input: "src/ebusd-clasone-card.ts",
   output: {
-    file: "dist/ebusd-clasone-card.js",
+    file: "ebusd-clasone-card.js",
     format: "es",
     inlineDynamicImports: true,
     sourcemap: false,

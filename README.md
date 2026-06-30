@@ -103,7 +103,7 @@ Then point `computed_setpoint_entity` at the resulting `sensor.ebusd_boiler_ch_f
 
 ```bash
 npm install
-npm run build   # outputs dist/ebusd-clasone-card.js
+npm run build   # outputs ebusd-clasone-card.js (repo root)
 npm run watch   # rebuild on change
 ```
 
