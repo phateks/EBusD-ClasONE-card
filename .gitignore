@@ -1,0 +1,17 @@
+# Dependencies (regenerate with `npm install`)
+node_modules/
+
+# npm / build logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Note: dist/ is intentionally tracked — it is the distributable
+# bundle used by HACS / manual install.
