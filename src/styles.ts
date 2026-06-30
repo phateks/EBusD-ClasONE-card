@@ -8,14 +8,15 @@ export const styles = css`
     --bc-green: #5dcaa5;
     --bc-txt: #e8eef6;
     --bc-sub: #8aa0bd;
-    --bc-card-bg: linear-gradient(150deg, #16243a, #101a2c);
     --bc-box-bg: #0f1d30;
     --bc-border: #26425f;
     --bc-radius: 18px;
   }
 
   ha-card {
-    background: var(--bc-card-bg);
+    /* No hardcoded background: inherit the theme's default so transparency
+       (e.g. via card_mod or a transparent theme) can be applied if needed. */
+    background: var(--ha-card-background, var(--card-background-color, none));
     border: 1px solid var(--bc-border);
     border-radius: var(--bc-radius);
     box-shadow: 0 0 0 1px rgba(63, 208, 255, 0.06), 0 2px 10px rgba(0, 0, 0, 0.3);

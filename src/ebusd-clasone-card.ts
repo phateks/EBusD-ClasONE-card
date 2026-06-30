@@ -1,6 +1,6 @@
 import { LitElement, html, nothing, TemplateResult } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { HomeAssistant, hasConfigOrEntityChanged, fireEvent } from "custom-card-helpers";
+import { HomeAssistant, fireEvent } from "custom-card-helpers";
 import { BoilerCardConfig, CARD_VERSION, mapStatus, StatusKind } from "./types";
 import { styles } from "./styles";
 
@@ -17,7 +17,7 @@ window.customCards.push({
   name: "EBusD Clas One Card",
   description: "Ariston Clas One boiler card (ebusd) — status, flow/return, flame, thermoregulation offset & computed setpoint, DHW/CH setpoints, pressure.",
   preview: true,
-  documentationURL: "https://github.com/YOUR_GH_USER/EBusD-ClasONE-card",
+  documentationURL: "https://github.com/phateks/EBusD-ClasONE-card",
 });
 
 const STATUS_COLORS: Record<StatusKind, string> = {
@@ -90,7 +90,9 @@ export class EbusdClasOneCard extends LitElement {
 
   protected shouldUpdate(changed: Map<string, unknown>): boolean {
     if (!this.config) return false;
-    return hasConfigOrEntityChanged(this as any, changed, false);
+    // Multi-entity card: re-render on any config or hass state change so the
+    // UI reflects sensor/switch updates instantly.
+    return changed.has("config") || changed.has("hass");
   }
 
   // ---------- helpers ----------
