@@ -1,0 +1,38 @@
+{
+  "name": "ebusd-clasone-card",
+  "version": "1.0.0",
+  "description": "A custom Lovelace card for Ariston Clas One boilers via ebusd (with Ariston cloud fallback). Shows status, flow/return temps, flame power, thermoregulation offset and computed flow setpoint, DHW/CH setpoints and pressure.",
+  "type": "module",
+  "main": "dist/ebusd-clasone-card.js",
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c --watch",
+    "lint": "echo \"(no lint configured)\""
+  },
+  "keywords": [
+    "home-assistant",
+    "homeassistant",
+    "lovelace",
+    "custom-card",
+    "ebusd",
+    "ariston",
+    "clas-one",
+    "boiler"
+  ],
+  "author": "Vlad",
+  "license": "MIT",
+  "dependencies": {
+    "custom-card-helpers": "^1.9.0",
+    "lit": "^3.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@rollup/plugin-typescript": "^11.1.6",
+    "rollup": "^4.9.6",
+    "tslib": "^2.6.2",
+    "typescript": "^5.3.3"
+  }
+}
