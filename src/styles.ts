@@ -8,7 +8,9 @@ export const styles = css`
     --bc-green: #5dcaa5;
     --bc-txt: #e8eef6;
     --bc-sub: #8aa0bd;
-    --bc-box-bg: #0f1d30;
+    /* Transparent inner boxes so the card respects the dashboard background /
+       any transparency applied via theme or card_mod. */
+    --bc-box-bg: transparent;
     --bc-border: #26425f;
     --bc-radius: 18px;
   }
@@ -239,6 +241,10 @@ export const styles = css`
     flex-direction: column;
     align-items: center;
     gap: 10px;
+  }
+  .sp-card.disabled {
+    opacity: 0.4;
+    pointer-events: none;
   }
   .sp-head {
     display: inline-flex;

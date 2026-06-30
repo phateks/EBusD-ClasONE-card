@@ -40,7 +40,7 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   pressure_entity?: string; // sensor.ebusd_boiler_boiler_pressure
 }
 
-export const CARD_VERSION = "1.0.1";
+export const CARD_VERSION = "1.0.2";
 
 // Status mapping: raw ebusd boiler_status -> label + color key
 export type StatusKind = "idle" | "ch" | "dhw" | "other";

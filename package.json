@@ -1,6 +1,6 @@
 {
   "name": "ebusd-clasone-card",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A custom Lovelace card for Ariston Clas One boilers via ebusd (with Ariston cloud fallback). Shows status, flow/return temps, flame power, thermoregulation offset and computed flow setpoint, DHW/CH setpoints and pressure.",
   "type": "module",
   "main": "ebusd-clasone-card.js",

@@ -267,6 +267,9 @@ export class EbusdClasOneCard extends LitElement {
 
   private renderSetpoints(): TemplateResult {
     const c = this.config;
+    // When thermoregulation is on, the CH setpoint is driven by the offset, so
+    // the manual CH setpoint control is inactive.
+    const chDisabled = this.isOn(c.thermoreg_entity);
     return html`
       <div class="setpoints">
         ${this.renderSetpointCard(
@@ -287,7 +290,8 @@ export class EbusdClasOneCard extends LitElement {
           c.ch_setpoint_display_entity ?? c.ch_setpoint_entity,
           c.ch_min ?? 30,
           c.ch_max ?? 80,
-          c.ch_step ?? 1
+          c.ch_step ?? 1,
+          chDisabled
         )}
         ${c.pressure_entity
           ? this.renderPressure(c.pressure_entity)
@@ -304,25 +308,29 @@ export class EbusdClasOneCard extends LitElement {
     displayEntity: string | undefined,
     min: number,
     max: number,
-    step: number
+    step: number,
+    disabled = false
   ): TemplateResult | typeof nothing {
     if (!setEntity) return nothing;
-    const cur = this.num(displayEntity);
-    const setVal = this.num(setEntity) ?? cur ?? min;
+    // The control entity (a number) is the source of truth: it writes the value
+    // to the boiler and reads the boiler value back. Show it directly so the
+    // card reflects what we set; the display entity is only a fallback.
+    const shown = this.num(setEntity) ?? this.num(displayEntity) ?? min;
     const change = (delta: number) => {
-      const next = Math.min(max, Math.max(min, setVal + delta));
+      if (disabled) return;
+      const next = Math.min(max, Math.max(min, shown + delta));
       this.setNumber(setEntity, next);
     };
     return html`
-      <div class="sp-card">
+      <div class="sp-card ${disabled ? "disabled" : ""}">
         <div class="sp-head">
           <ha-icon icon=${icon} style="color:${color};"></ha-icon>
           <span class="t">${label}</span>
         </div>
         <div class="sp-control">
-          <button class="step-btn" @click=${() => change(-step)}>−</button>
-          <span class="sp-val" style="color:${color};">${this.fmt(cur ?? setVal)}</span>
-          <button class="step-btn" @click=${() => change(step)}>+</button>
+          <button class="step-btn" ?disabled=${disabled} @click=${() => change(-step)}>−</button>
+          <span class="sp-val" style="color:${color};">${this.fmt(shown)}</span>
+          <button class="step-btn" ?disabled=${disabled} @click=${() => change(step)}>+</button>
         </div>
       </div>
     `;
