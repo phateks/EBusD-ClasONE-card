@@ -202,7 +202,7 @@ export class EbusdClasOneCard extends LitElement {
 
     return html`
       <div class="flow-row">
-        <div class="unit">
+        <div class="unit clickable" @click=${() => this.moreInfo(c.flame_power_entity)}>
           <div class="unit-icons">
             <ha-icon class="boiler" icon="mdi:water-boiler"></ha-icon>
             <ha-icon class="flame ${burning ? "burning" : ""}" icon="mdi:fire"></ha-icon>

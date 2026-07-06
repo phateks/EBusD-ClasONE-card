@@ -280,4 +280,5 @@ export const styles = css`
   .sp-val.display-only { padding: 4px 0; }
 
   ha-icon.clickable { cursor: pointer; }
+  .unit.clickable { cursor: pointer; }
 `;
