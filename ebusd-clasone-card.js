@@ -405,7 +405,7 @@ function t(t,e,s,i){var n,o=arguments.length,r=o<3?e:null===i?i=Object.getOwnPro
       overflow: hidden;
     }
 
-    .sp-card:last-child {
+    .setpoints > .sp-card:last-child {
       grid-column: 1 / -1;
     }
 

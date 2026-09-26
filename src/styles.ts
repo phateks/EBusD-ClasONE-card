@@ -407,7 +407,7 @@ export const styles = css`
       overflow: hidden;
     }
 
-    .sp-card:last-child {
+    .setpoints > .sp-card:last-child {
       grid-column: 1 / -1;
     }
 
