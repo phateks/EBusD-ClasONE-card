@@ -282,11 +282,13 @@ export const styles = css`
   @media (max-width: 620px) {
     ha-card {
       padding: 12px;
+      overflow: hidden;
     }
 
     .header {
       flex-wrap: wrap;
       align-items: stretch;
+      gap: 8px;
     }
 
     .title-wrap {
@@ -298,61 +300,108 @@ export const styles = css`
       padding: 6px 10px;
       flex: 1 1 auto;
       justify-content: center;
+      min-width: 0;
     }
 
     .flow-row {
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: minmax(110px, 0.85fr) minmax(0, 1.4fr);
+      gap: 8px;
+      align-items: stretch;
+    }
+
+    .unit,
+    .pipes,
+    .offset-box,
+    .sp-card,
+    .pipe {
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .unit {
       flex-basis: auto;
       width: 100%;
       min-width: 0;
+      padding: 10px 8px;
     }
 
     .pipes {
       width: 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .pipe {
+      padding: 10px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .pipe .plabel {
+      font-size: 11px;
+      letter-spacing: 0.7px;
+      white-space: nowrap;
+    }
+
+    .pipe .pval {
+      font-size: clamp(18px, 5vw, 24px);
+      line-height: 1.1;
     }
 
     .offset-box {
       flex-basis: auto;
       width: 100%;
       min-width: 0;
+      margin-top: 4px;
+      padding: 10px 8px;
+    }
+
+    .offset-box .offset-title {
+      font-size: 10px;
+      line-height: 1.2;
+    }
+
+    .offset-box .offset-value {
+      font-size: 22px;
     }
 
     .setpoints {
-      flex-direction: column;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      align-items: stretch;
     }
 
     .sp-card {
       width: 100%;
+      min-width: 0;
+      padding: 10px 8px;
+      overflow: hidden;
     }
 
-    .pipe {
-      padding: 10px 12px;
-    }
-
-    .pipe .plabel {
-      font-size: 11px;
-      letter-spacing: 0.7px;
-    }
-
-    .pipe .pval {
-      font-size: clamp(18px, 5vw, 24px);
+    .sp-card:last-child {
+      grid-column: 1 / -1;
     }
 
     .sp-head .t {
       letter-spacing: 0.6px;
+      font-size: 11px;
     }
 
     .sp-val {
       font-size: clamp(20px, 6vw, 28px);
+      white-space: nowrap;
     }
 
     .step-btn {
       width: 42px;
       height: 36px;
       font-size: 18px;
+      flex-shrink: 0;
     }
   }
 
@@ -373,6 +422,18 @@ export const styles = css`
 
     .header {
       gap: 8px;
+    }
+
+    .flow-row {
+      grid-template-columns: minmax(92px, 0.8fr) minmax(0, 1.4fr);
+    }
+
+    .pipe {
+      padding: 9px 8px;
+    }
+
+    .setpoints {
+      gap: 7px;
     }
   }
 
