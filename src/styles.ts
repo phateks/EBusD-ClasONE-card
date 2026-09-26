@@ -279,6 +279,103 @@ export const styles = css`
   .sp-val { font-size: 28px; font-weight: 700; }
   .sp-val.display-only { padding: 4px 0; }
 
+  @media (max-width: 620px) {
+    ha-card {
+      padding: 12px;
+    }
+
+    .header {
+      flex-wrap: wrap;
+      align-items: stretch;
+    }
+
+    .title-wrap {
+      flex: 1 1 100%;
+      min-width: 0;
+    }
+
+    .badge {
+      padding: 6px 10px;
+      flex: 1 1 auto;
+      justify-content: center;
+    }
+
+    .flow-row {
+      flex-direction: column;
+    }
+
+    .unit {
+      flex-basis: auto;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .pipes {
+      width: 100%;
+    }
+
+    .offset-box {
+      flex-basis: auto;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .setpoints {
+      flex-direction: column;
+    }
+
+    .sp-card {
+      width: 100%;
+    }
+
+    .pipe {
+      padding: 10px 12px;
+    }
+
+    .pipe .plabel {
+      font-size: 11px;
+      letter-spacing: 0.7px;
+    }
+
+    .pipe .pval {
+      font-size: clamp(18px, 5vw, 24px);
+    }
+
+    .sp-head .t {
+      letter-spacing: 0.6px;
+    }
+
+    .sp-val {
+      font-size: clamp(20px, 6vw, 28px);
+    }
+
+    .step-btn {
+      width: 42px;
+      height: 36px;
+      font-size: 18px;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .title-text {
+      font-size: 12px;
+      letter-spacing: 0.7px;
+    }
+
+    .status-badge {
+      font-size: 10px;
+      padding: 3px 8px;
+    }
+
+    .badge .lbl {
+      font-size: 9px;
+    }
+
+    .header {
+      gap: 8px;
+    }
+  }
+
   ha-icon.clickable { cursor: pointer; }
   .unit.clickable { cursor: pointer; }
 `;
