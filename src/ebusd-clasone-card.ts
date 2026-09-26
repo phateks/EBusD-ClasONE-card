@@ -223,6 +223,9 @@ export class EbusdClasOneCard extends LitElement {
         </div>
 
         ${this.renderOffset()}
+        ${c.pressure_entity
+          ? this.renderPressure(c.pressure_entity, true)
+          : nothing}
       </div>
     `;
   }
@@ -336,10 +339,10 @@ export class EbusdClasOneCard extends LitElement {
     `;
   }
 
-  private renderPressure(entity: string): TemplateResult {
+  private renderPressure(entity: string, mobile = false): TemplateResult {
     const p = this.num(entity);
     return html`
-      <div class="sp-card">
+      <div class="sp-card pressure-card ${mobile ? "pressure-mobile" : "pressure-desktop"}">
         <div class="sp-head">
           <ha-icon icon="mdi:gauge" style="color:#5dcaa5;"></ha-icon>
           <span class="t">PRESIUNE</span>

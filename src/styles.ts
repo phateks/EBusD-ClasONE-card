@@ -278,6 +278,7 @@ export const styles = css`
   .step-btn:active { transform: scale(0.95); }
   .sp-val { font-size: 28px; font-weight: 700; }
   .sp-val.display-only { padding: 4px 0; }
+  .pressure-mobile { display: none; }
 
   @media (max-width: 620px) {
     ha-card {
@@ -305,7 +306,7 @@ export const styles = css`
 
     .flow-row {
       display: grid;
-      grid-template-columns: minmax(110px, 0.85fr) minmax(0, 1.4fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
       align-items: stretch;
     }
@@ -324,13 +325,12 @@ export const styles = css`
       width: 100%;
       min-width: 0;
       padding: 10px 8px;
+      grid-column: 1;
+      grid-row: 1;
     }
 
     .pipes {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
+      display: contents;
     }
 
     .pipe {
@@ -339,6 +339,16 @@ export const styles = css`
       align-items: center;
       justify-content: space-between;
       gap: 6px;
+    }
+
+    .pipe.tur {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .pipe.retur {
+      grid-column: 3;
+      grid-row: 1;
     }
 
     .pipe .plabel {
@@ -354,6 +364,8 @@ export const styles = css`
 
     .offset-box {
       flex-basis: auto;
+      grid-column: 1 / span 2;
+      grid-row: 2;
       width: 100%;
       min-width: 0;
       margin-top: 4px;
@@ -367,6 +379,18 @@ export const styles = css`
 
     .offset-box .offset-value {
       font-size: 22px;
+    }
+
+    .pressure-desktop {
+      display: none;
+    }
+
+    .pressure-mobile {
+      display: flex;
+      grid-column: 3;
+      grid-row: 2;
+      justify-content: center;
+      align-self: stretch;
     }
 
     .setpoints {
@@ -424,12 +448,21 @@ export const styles = css`
       gap: 8px;
     }
 
-    .flow-row {
-      grid-template-columns: minmax(92px, 0.8fr) minmax(0, 1.4fr);
+    .unit {
+      padding: 8px 4px;
     }
 
     .pipe {
-      padding: 9px 8px;
+      padding: 9px 6px;
+    }
+
+    .pipe .plabel {
+      font-size: 10px;
+      letter-spacing: 0.4px;
+    }
+
+    .pipe .pval {
+      font-size: clamp(16px, 4.5vw, 20px);
     }
 
     .setpoints {
