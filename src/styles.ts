@@ -26,7 +26,7 @@ export const styles = css`
     border: 1px solid var(--bc-border);
     border-radius: var(--bc-radius);
     box-shadow: 0 0 0 1px rgba(63, 208, 255, 0.06), 0 2px 10px rgba(0, 0, 0, 0.3);
-    padding: 16px;
+    padding: 12px;
     color: var(--bc-txt);
     overflow: hidden;
   }
@@ -36,7 +36,7 @@ export const styles = css`
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 14px;
+    margin-bottom: 8px;
   }
   .title-wrap {
     display: flex;
@@ -117,30 +117,30 @@ export const styles = css`
     background: var(--bc-box-bg);
     border: 1px solid var(--bc-border);
     border-radius: 14px;
-    padding: 12px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 4px;
   }
   .unit-icons {
     position: relative;
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
   }
   .unit-icons .boiler {
-    --mdc-icon-size: 40px;
+    --mdc-icon-size: 32px;
     color: #8aa0bd;
   }
   .unit-icons .flame {
     position: absolute;
     bottom: -2px;
     right: -2px;
-    --mdc-icon-size: 22px;
+    --mdc-icon-size: 18px;
     color: #3a4a60;
   }
   .unit-icons .flame.burning {
@@ -173,7 +173,7 @@ export const styles = css`
     background: var(--bc-box-bg);
     border: 1px solid var(--bc-border);
     border-radius: 14px;
-    padding: 12px 16px;
+    padding: 8px 10px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -193,11 +193,11 @@ export const styles = css`
     background: var(--bc-box-bg);
     border: 1px solid #5dcaa533;
     border-radius: 14px;
-    padding: 12px 10px;
+    padding: 8px;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 8px;
+    gap: 5px;
     transition: opacity 0.2s;
   }
   .offset-box.disabled { opacity: 0.4; }
@@ -236,18 +236,18 @@ export const styles = css`
   /* ---------- Setpoints row ---------- */
   .setpoints {
     display: flex;
-    gap: 12px;
+    gap: 8px;
   }
   .sp-card {
     flex: 1;
     background: var(--bc-box-bg);
     border: 1px solid var(--bc-border);
     border-radius: 16px;
-    padding: 12px;
+    padding: 9px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
   }
   .sp-card.disabled {
     opacity: 0.4;
@@ -270,7 +270,7 @@ export const styles = css`
   }
   .step-btn {
     width: 44px;
-    height: 40px;
+    height: 34px;
     border-radius: 11px;
     background: #1d314f;
     border: none;
@@ -288,9 +288,9 @@ export const styles = css`
   .flow-row {
     display: grid;
     grid-template-columns: 124px repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(76px, 1fr));
-    gap: 8px;
-    margin-bottom: 12px;
+    grid-template-rows: repeat(2, minmax(56px, 1fr));
+    gap: 6px;
+    margin-bottom: 8px;
     align-items: stretch;
   }
 
@@ -320,13 +320,13 @@ export const styles = css`
     flex-direction: column;
     align-items: stretch;
     justify-content: space-between;
-    padding: 10px 12px;
+    padding: 7px 9px;
   }
 
   .sensor-tile .tile-label {
     align-self: flex-start;
     color: var(--bc-sub);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.7px;
     line-height: 1.2;
@@ -337,7 +337,7 @@ export const styles = css`
   .sensor-tile .tile-value {
     align-self: center;
     color: var(--bc-txt);
-    font-size: 24px;
+    font-size: 21px;
     font-weight: 700;
     line-height: 1.1;
     margin: auto 0;
@@ -379,7 +379,7 @@ export const styles = css`
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
-    margin: 0 0 12px;
+    margin: 0 0 8px;
   }
 
   @container boiler-card (max-width: 760px) {
@@ -425,8 +425,8 @@ export const styles = css`
 
     .flow-row {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(76px, auto));
-      gap: 8px;
+      grid-template-rows: repeat(2, minmax(56px, auto));
+      gap: 6px;
     }
 
     .unit,
@@ -441,13 +441,13 @@ export const styles = css`
       flex-basis: auto;
       width: 100%;
       min-width: 0;
-      padding: 10px 8px;
+      padding: 8px 6px;
       grid-column: 1;
       grid-row: 1 / span 2;
     }
 
     .pipe {
-      padding: 10px 10px;
+      padding: 8px 8px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -455,7 +455,7 @@ export const styles = css`
     }
 
     .flow-row > .sensor-tile {
-      padding: 9px 8px;
+      padding: 7px 7px;
     }
 
     .sensor-tile .tile-label {
@@ -464,7 +464,7 @@ export const styles = css`
     }
 
     .sensor-tile .tile-value {
-      font-size: clamp(18px, 5vw, 24px);
+      font-size: clamp(17px, 4.5vw, 21px);
     }
 
     .pipe.tur {
@@ -496,7 +496,7 @@ export const styles = css`
     ha-card > .offset-box {
       width: 100%;
       min-width: 0;
-      padding: 10px 8px;
+      padding: 8px 7px;
     }
 
     .offset-box .offset-title {
@@ -518,7 +518,7 @@ export const styles = css`
     .sp-card {
       width: 100%;
       min-width: 0;
-      padding: 10px 8px;
+      padding: 8px 7px;
       overflow: hidden;
     }
 
@@ -560,11 +560,11 @@ export const styles = css`
     }
 
     .unit {
-      padding: 8px 4px;
+      padding: 6px 4px;
     }
 
     .pipe {
-      padding: 9px 6px;
+      padding: 7px 5px;
     }
 
     .sensor-tile .tile-value {
