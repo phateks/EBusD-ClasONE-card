@@ -622,6 +622,66 @@ export const styles = css`
     }
   }
 
+  @media (min-width: 761px) {
+    .flow-row {
+      grid-template-rows: repeat(2, 72px);
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .flow-row > .unit {
+      padding: 6px;
+      gap: 3px;
+    }
+
+    .unit-icons {
+      width: 38px;
+      height: 38px;
+    }
+
+    .unit-icons .boiler {
+      --mdc-icon-size: 30px;
+    }
+
+    .unit-icons .flame {
+      --mdc-icon-size: 17px;
+    }
+
+    .sensor-tile {
+      padding: 6px 8px;
+    }
+
+    .sensor-tile .tile-label {
+      font-size: 10px;
+    }
+
+    .sensor-tile .tile-value {
+      font-size: 20px;
+    }
+
+    ha-card > .offset-box {
+      padding: 6px 10px;
+      gap: 3px;
+      margin-bottom: 8px;
+    }
+
+    .offset-title {
+      font-size: 10px;
+    }
+
+    .offset-title .sp {
+      font-size: 15px;
+    }
+
+    .offset-value {
+      font-size: 20px;
+    }
+
+    .offset-box .slider {
+      margin: 0;
+    }
+  }
+
   ha-icon.clickable { cursor: pointer; }
   .unit.clickable { cursor: pointer; }
 `;
