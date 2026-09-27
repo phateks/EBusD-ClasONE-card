@@ -1,123 +1,111 @@
 # EBusD Clas One Card
 
-A custom Lovelace card for **Ariston Clas One** boilers integrated via **[ebusd](https://github.com/john30/ebusd)** (with optional Ariston-cloud fallback for values ebusd doesn't expose, such as the computed flow setpoint).
+A Home Assistant Lovelace card and companion setup documentation for monitoring and
+controlling an **Ariston Clas One** through **ebusd** and MQTT.
 
-Shows, in one compact card:
+This repository covers the complete path from the eBUS interface to the dashboard:
 
-- **Status** badge (IDLE / CH HEATING / DHW HEATING) derived from the boiler status sensor
-- **CH** and **Thermoregulation** toggles in the header
-- **Flame** power (kW) with an animated flame when burning
-- **TUR / RETUR** (flow / return) and optional outdoor temperatures
-- **Pressure** (bar)
-- **Thermoregulation offset** (−14…+14) with a slider, plus the **computed flow setpoint** shown next to the title when thermoregulation is active
-- **DHW setpoint** and **CH setpoint** with −/+ controls
+```text
+Ariston Clas One
+    -> compatible eBUS interface
+    -> ebusd Home Assistant app
+    -> MQTT broker and Home Assistant MQTT integration
+    -> discovered Home Assistant entities
+    -> EBusD Clas One Lovelace card
+```
 
-All entities are configurable through a visual editor — nothing is hardcoded.
+The card is only the dashboard layer. It does not install ebusd, configure MQTT, or
+create boiler entities. Those parts must be set up and verified first.
 
-![preview](docs/preview.png)
+## Documentation
 
-## Installation
+- [End-to-end installation: ebusd, local CSV files, MQTT and the card](docs/SETUP.md)
+- [Clas One CSV and entity reference](docs/CLASONE_ENTITIES.md)
+- [Troubleshooting](docs/TROUBLESHOOTING.md)
+- [Documentation index](docs/README.md)
 
-### HACS (recommended)
+## What the card displays
 
-1. In HACS → **Frontend** → three-dot menu → **Custom repositories**.
-2. Add this repository URL, category **Lovelace** (Dashboard).
-3. Install **EBusD Clas One Card**.
-4. Reload your browser (Ctrl+Shift+R).
+- Boiler status, CH and thermoregulation switches
+- Flame power and flow/return temperatures
+- Optional outdoor temperature and boiler pressure
+- Thermoregulation offset and, when configured, its computed flow setpoint
+- DHW and CH setpoint controls
 
-### Manual
+All card entities can be selected in the visual editor or set in YAML. The four
+temperature/pressure tile labels can also be customized. Values and controls depend on
+the entities exposed by the user's ebusd/MQTT setup.
 
-1. Download `ebusd-clasone-card.js` from the [latest release](../../releases).
-2. Copy it to `/config/www/`.
-3. Add the resource (Settings → Dashboards → Resources):
-   ```yaml
-   url: /local/ebusd-clasone-card.js
-   type: module
-   ```
+## Install the card
 
-## Usage
+Install this repository as a Lovelace frontend card through HACS, or download
+`ebusd-clasone-card.js` from a release and add it as a JavaScript module resource:
 
-Add the card via the UI ("Add card" → search **EBusD Clas One**) and use the visual editor, or in YAML:
+```yaml
+url: /local/ebusd-clasone-card.js
+type: module
+```
+
+For the separate ebusd app, Mosquitto, local configuration files, and MQTT discovery
+steps, follow the [end-to-end setup guide](docs/SETUP.md).
+
+## Example card configuration
+
+Entity IDs below are examples. Select the entities actually created in your Home
+Assistant instance; names vary with the ebusd configuration, MQTT discovery settings,
+and entity registry.
 
 ```yaml
 type: custom:ebusd-clasone-card
 title: ARISTON CLAS ONE
 status_entity: sensor.ebusd_boiler_boiler_status
 ch_switch_entity: switch.ebusd_boiler_heating_status
-thermoreg_entity: switch.heating_ebusd_boiler_thermoregulation_switch
+thermoreg_entity: switch.ebusd_boiler_thermoregulation_switch
 flame_power_entity: sensor.ebusd_boiler_flame_power_kw
 flow_temp_entity: sensor.ebusd_boiler_lwt_temp
 return_temp_entity: sensor.ebusd_boiler_ewt_temp
-# Optional outdoor temperature sensor from your Home Assistant setup
-outdoor_temp_entity: sensor.outdoor_temperature
-offset_entity: number.ariston_heating_flow_offset_1
-offset_min: -14
-offset_max: 14
-offset_step: 2
+outdoor_temp_entity: sensor.ebusd_boiler_ext_temp
+pressure_entity: sensor.ebusd_boiler_boiler_pressure
+offset_entity: number.ebusd_boiler_z1_heat_offset_set
 computed_setpoint_entity: sensor.ebusd_boiler_ch_flow_setpoint
 dhw_setpoint_entity: number.ebusd_boiler_dhw_comfort_temp_set
 dhw_setpoint_display_entity: sensor.ebusd_boiler_dhw_current_target_temp
-dhw_min: 36
-dhw_max: 60
-dhw_step: 1
 ch_setpoint_entity: number.ebusd_boiler_z1_heat_setpoint_set
-ch_min: 30
-ch_max: 80
-ch_step: 1
-pressure_entity: sensor.ebusd_boiler_boiler_pressure
 flow_temp_label: TUR
 return_temp_label: RETUR
 outdoor_temp_label: EXT
-pressure_label: PRESIUNE
+pressure_label: PRESSURE
 ```
 
-## Configuration options
+The sample IDs are not guaranteed to match your installation. In particular, check the
+entity domains for the two switches and writable setpoints before assigning them. See
+the [entity reference](docs/CLAS_ONE_ENTITIES.md) for the relationship between CSV
+messages and card fields.
 
-| Option | Type | Default | Description |
-|---|---|---|---|
-| `title` | string | `ARISTON CLAS ONE` | Card title |
-| `status_entity` | sensor | — | Boiler status (mapped to IDLE / CH / DHW) |
-| `ch_switch_entity` | switch | — | Central-heating toggle |
-| `thermoreg_entity` | switch | — | Thermoregulation toggle |
-| `flame_power_entity` | sensor | — | Flame power in kW (animates when > 0.1) |
-| `flow_temp_entity` | sensor | — | Flow (TUR) temperature |
-| `return_temp_entity` | sensor | — | Return (RETUR) temperature |
-| `outdoor_temp_entity` | sensor | — | Optional outdoor temperature |
-| `flow_temp_label` | string | `TUR` | Custom label for the flow temperature tile |
-| `return_temp_label` | string | `RETUR` | Custom label for the return temperature tile |
-| `outdoor_temp_label` | string | `EXT` | Custom label for the outdoor temperature tile |
-| `pressure_label` | string | `PRESIUNE` | Custom label for the pressure tile |
-| `offset_entity` | number | — | Thermoregulation flow offset |
-| `offset_min` / `offset_max` / `offset_step` | number | −14 / 14 / 2 | Offset slider range |
-| `computed_setpoint_entity` | sensor | — | Computed flow setpoint, shown next to the title when thermoregulation is on |
-| `dhw_setpoint_entity` | number | — | DHW setpoint (the −/+ control writes here) |
-| `dhw_setpoint_display_entity` | sensor/number | = control | Value shown in the DHW box |
-| `dhw_min` / `dhw_max` / `dhw_step` | number | 36 / 60 / 1 | DHW limits |
-| `ch_setpoint_entity` | number | — | CH setpoint (control) |
-| `ch_setpoint_display_entity` | sensor/number | = control | Value shown in the CH box |
-| `ch_min` / `ch_max` / `ch_step` | number | 30 / 80 / 1 | CH limits |
-| `pressure_entity` | sensor | — | System pressure (bar) |
+## Project files
 
-Any option you leave empty simply hides that part of the card.
+- `src/` — card, editor, types and styles
+- `ebusd-clasone-card.js` — built frontend bundle distributed by HACS/manual install
+- [`ebusd/ariston/clas_one.csv`](docs/ebusd/ariston/clas_one.csv) — local Clas One
+  ebusd message definitions
+- [`ebusd/_templates.csv`](docs/ebusd/_templates.csv) — shared CSV templates used by
+  the local definitions
 
-## Notes on the computed flow setpoint
-
-ebusd does not expose the thermoregulation-computed flow setpoint out of the box. On the Clas One it is broadcast on **`200f` / ID `6197`**. You can add it to your ebusd CSV:
-
-```
-b,boiler,ch_flow_setpoint,CH Flow Setpoint,37,fe,200f,6197,,,SIN,10,°C
-```
-
-Then point `computed_setpoint_entity` at the resulting `sensor.ebusd_boiler_ch_flow_setpoint`. If you prefer, you can use the Ariston cloud integration's `sensor.*_ch_flow_setpoint_temp` instead.
+The local CSV files are optional and are not a complete replacement for the standard
+ebusd configuration CDN. Review the [installation guide](docs/SETUP.md) and the
+[CSV-specific notes](docs/CLAS_ONE_ENTITIES.md) before using them. The provided files
+include write definitions and a message-ID discrepancy that must be checked against
+your boiler and ebusd logs.
 
 ## Development
 
 ```bash
-npm install
-npm run build   # outputs ebusd-clasone-card.js (repo root)
-npm run watch   # rebuild on change
+npm ci
+npm run build
 ```
+
+The build writes `ebusd-clasone-card.js` to the repository root.
 
 ## License
 
-MIT
+MIT. See [LICENSE](LICENSE).
