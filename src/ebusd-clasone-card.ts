@@ -131,7 +131,10 @@ export class EbusdClasOneCard extends LitElement {
     if (!this.config || !this.hass) return nothing;
     return html`
       <ha-card>
-        ${this.renderHeader()} ${this.renderFlowRow()} ${this.renderSetpoints()}
+        ${this.renderHeader()}
+        ${this.renderFlowRow()}
+        ${this.renderOffset()}
+        ${this.renderSetpoints()}
       </ha-card>
     `;
   }
@@ -228,7 +231,6 @@ export class EbusdClasOneCard extends LitElement {
         ${c.pressure_entity
           ? this.renderPressure(c.pressure_entity, !c.outdoor_temp_entity)
           : nothing}
-        ${this.renderOffset()}
       </div>
     `;
   }

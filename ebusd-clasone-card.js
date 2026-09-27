@@ -327,12 +327,11 @@ function t(t,e,s,i){var n,o=arguments.length,r=o<3?e:null===i?i=Object.getOwnPro
     grid-column: 2 / span 2;
   }
 
-  .flow-row > .offset-box {
-    grid-column: 1 / -1;
-    grid-row: 3;
+  ha-card > .offset-box {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
+    margin: 0 0 12px;
   }
 
   .pressure-card .sp-head {
@@ -375,7 +374,6 @@ function t(t,e,s,i){var n,o=arguments.length,r=o<3?e:null===i?i=Object.getOwnPro
 
     .unit,
     .pipes,
-    .offset-box,
     .sp-card,
     .pipe {
       min-width: 0;
@@ -436,13 +434,9 @@ function t(t,e,s,i){var n,o=arguments.length,r=o<3?e:null===i?i=Object.getOwnPro
       line-height: 1.1;
     }
 
-    .flow-row > .offset-box {
-      flex-basis: auto;
-      grid-column: 1 / -1;
-      grid-row: 3;
+    ha-card > .offset-box {
       width: 100%;
       min-width: 0;
-      margin-top: 4px;
       padding: 10px 8px;
     }
 
@@ -532,7 +526,10 @@ function t(t,e,s,i){var n,o=arguments.length,r=o<3?e:null===i?i=Object.getOwnPro
   .unit.clickable { cursor: pointer; }
 `;console.info("%c EBUSD-CLASONE-CARD %c v1.0.2 ","color:#16243a;background:#4ecdc4;font-weight:700;border-radius:4px 0 0 4px;padding:2px 6px;","color:#4ecdc4;background:#16243a;font-weight:700;border-radius:0 4px 4px 0;padding:2px 6px;"),window.customCards=window.customCards||[],window.customCards.push({type:"ebusd-clasone-card",name:"EBusD Clas One Card",description:"Ariston Clas One boiler card (ebusd) — status, flow/return, flame, thermoregulation offset & computed setpoint, DHW/CH setpoints, pressure.",preview:!0,documentationURL:"https://github.com/phateks/EBusD-ClasONE-card"});const bt={idle:"#8aa0bd",ch:"#ff8a5c",dhw:"#4ecdc4",other:"#8aa0bd"};let gt=class extends rt{static async getConfigElement(){return await Promise.resolve().then(function(){return wt}),document.createElement("ebusd-clasone-card-editor")}static getStubConfig(){return{type:"custom:ebusd-clasone-card",title:"ARISTON CLAS ONE",status_entity:"sensor.ebusd_boiler_boiler_status",ch_switch_entity:"switch.ebusd_boiler_heating_status",thermoreg_entity:"switch.heating_ebusd_boiler_thermoregulation_switch",flame_power_entity:"sensor.ebusd_boiler_flame_power_kw",flow_temp_entity:"sensor.ebusd_boiler_lwt_temp",return_temp_entity:"sensor.ebusd_boiler_ewt_temp",offset_entity:"number.ariston_heating_flow_offset_1",offset_min:-14,offset_max:14,offset_step:2,computed_setpoint_entity:"sensor.ebusd_boiler_ch_flow_setpoint",dhw_setpoint_entity:"number.ebusd_boiler_dhw_comfort_temp_set",dhw_setpoint_display_entity:"sensor.ebusd_boiler_dhw_current_target_temp",dhw_min:36,dhw_max:60,dhw_step:1,ch_setpoint_entity:"number.ebusd_boiler_z1_heat_setpoint_set",ch_min:30,ch_max:80,ch_step:1,pressure_entity:"sensor.ebusd_boiler_boiler_pressure"}}setConfig(t){if(!t)throw new Error("Invalid configuration");this.config={offset_min:-14,offset_max:14,offset_step:2,dhw_min:36,dhw_max:60,dhw_step:1,ch_min:30,ch_max:80,ch_step:1,title:"ARISTON CLAS ONE",...t}}getCardSize(){return 4}shouldUpdate(t){return!!this.config&&(t.has("config")||t.has("hass"))}st(t){return t?this.hass?.states?.[t]:void 0}num(t){const e=this.st(t);if(!e)return;const s=parseFloat(e.state);return isNaN(s)?void 0:s}isOn(t){return"on"===this.st(t)?.state}fmt(t,e=0,s="°"){return void 0===t?"—":`${t.toFixed(e)}${s}`}toggle(t){t&&this.hass.callService("homeassistant","toggle",{entity_id:t})}moreInfo(t){t&&mt(this,"hass-more-info",{entityId:t})}setNumber(t,e){t&&this.hass.callService("number","set_value",{entity_id:t,value:e})}render(){return this.config&&this.hass?W`
       <ha-card>
-        ${this.renderHeader()} ${this.renderFlowRow()} ${this.renderSetpoints()}
+        ${this.renderHeader()}
+        ${this.renderFlowRow()}
+        ${this.renderOffset()}
+        ${this.renderSetpoints()}
       </ha-card>
     `:F}renderHeader(){const t=this.config,e=this.st(t.status_entity)?.state,{label:s,kind:i}=function(t){if(!t)return{label:"—",kind:"other"};const e=t.toLowerCase();return"standby"===e?{label:"IDLE",kind:"idle"}:"heating"===e?{label:"CH HEATING",kind:"ch"}:"heating hot water"===e||"water tank"===e||"comfort"===e?{label:"DHW HEATING",kind:"dhw"}:{label:t.toUpperCase(),kind:"other"}}(e),n=bt[i],o=this.isOn(t.ch_switch_entity),r=this.isOn(t.thermoreg_entity);return W`
       <div class="header">
@@ -590,7 +587,6 @@ function t(t,e,s,i){var n,o=arguments.length,r=o<3?e:null===i?i=Object.getOwnPro
 
         ${t.outdoor_temp_entity?this.renderOutdoorTemperature(t.outdoor_temp_entity,!t.pressure_entity):F}
         ${t.pressure_entity?this.renderPressure(t.pressure_entity,!t.outdoor_temp_entity):F}
-        ${this.renderOffset()}
       </div>
     `}renderOutdoorTemperature(t,e){const s=this.num(t);return W`
       <div

@@ -329,12 +329,11 @@ export const styles = css`
     grid-column: 2 / span 2;
   }
 
-  .flow-row > .offset-box {
-    grid-column: 1 / -1;
-    grid-row: 3;
+  ha-card > .offset-box {
     width: 100%;
     min-width: 0;
     box-sizing: border-box;
+    margin: 0 0 12px;
   }
 
   .pressure-card .sp-head {
@@ -377,7 +376,6 @@ export const styles = css`
 
     .unit,
     .pipes,
-    .offset-box,
     .sp-card,
     .pipe {
       min-width: 0;
@@ -438,13 +436,9 @@ export const styles = css`
       line-height: 1.1;
     }
 
-    .flow-row > .offset-box {
-      flex-basis: auto;
-      grid-column: 1 / -1;
-      grid-row: 3;
+    ha-card > .offset-box {
       width: 100%;
       min-width: 0;
-      margin-top: 4px;
       padding: 10px 8px;
     }
 
