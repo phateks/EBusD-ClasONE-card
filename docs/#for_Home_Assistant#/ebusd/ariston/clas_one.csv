@@ -1,0 +1,173 @@
+# Ariston Clas One ebusd configuration
+# Derived from ariston.csv (Genus One Hybrid) - stripped to boiler-only messages
+# Tested on Ariston Clas One with ebus WiFi adapter v6.3
+# Addresses: 37/3c = Sensys master/boiler slave, 7f/84 = WiFi gateway
+
+############################################################################################
+####                             SYSTEM BROADCAST MESSAGES                              ####
+############################################################################################
+
+b,broadcast,cast_date,Cast Date,,fe,2070,,time,,VTM,,,,date,,HDA,,,,,,,,,,,,,,,,,,,,,,,,
+b,broadcast,ebus_reset,Reset ebus,,fe,2034,,ebus_reset,,onoff,,,,,,,,,,,,,,,,,,,,,,
+w,broadcast,ebus_reset,Reset ebus,,fe,2031,ffffffffffffffffffffffff23fe00,ebus_reset,m,BCD,,,,,,,,,,,,,,,,,,,,,,
+b,broadcast,bus_control,Bus Control,,fe,2038,,ign,,IGN:5
+b,broadcast,boiler_serial_number,BoilerSerial,37,fe,2031,,value,,STR:12
+
+############################################################################################
+####                             BOILER - TEMPERATURES                                  ####
+############################################################################################
+
+r,boiler,LWT_temp,CH Flow Temp,,3c,2000,6810,ign,s,IGN:1,,,,,,SIN,10,°C
+r,boiler,EWT_temp,CH Return Temp,,3c,2000,6910,ign,s,IGN:1,,,,,,SIN,10,°C
+r,boiler,boiler_pressure,System Pressure,,3c,2000,7547,ign,s,IGN,,,,boiler_pressure,,UCH,10,bar
+r1,boiler,flame_power_kw,Flame Power,,3c,2000,6847,,s,IGN:1,,,,,,UIN,10,kW
+# DEZACTIVAT (mort, 7310 nu vine pe bus): b,boiler,ext_temp_bc,External Temp Broadcast,,fe,2010,7310,,,SIN,10,°C,32767=0
+
+############################################################################################
+####                             BOILER - STATUS                                        ####
+############################################################################################
+
+r,boiler,flame_active,Flame Active,,3c,2000,0e11,ign,s,IGN:1,,,,,s,onoff
+r1,boiler,diverter_valve,Diverter Valve,,3c,2000,c012,ign,s,IGN:1,,,,,,BCD,0=dhw;1=heating
+b,boiler,boiler_status,Boiler Status,,fe,2010,c04b,boilerstatus,,UCH,1=standby;2=heating;3=heating hot water;4=water tank;5=circulating;23=manual test;24=comfort;31=gas_circuit_deaeration;36=auto_calibration;51=low_water_pressure;52=no_flame
+r,boiler,boiler_status,Boiler Status,,3c,2000,c04b,ign,s,IGN:1,,,,boilerstatus,s,UCH,1=standby;2=heating;3=heating hot water;4=water tank;5=circulating;23=manual test;24=comfort;31=gas_circuit_deaeration;36=auto_calibration;51=low_water_pressure;52=no_flame
+r,boiler,last_error,Last Error,,3c,2002,0400,,s,error_code,,,7 first bits of byte,zone,s,BI0:7,,,,,s,IGN:2,,,Date: YY/MM/DD,year,s,UCH,,,,month,s,UCH,,,,day,s,UCH,,,,time,s,HTM,,
+
+############################################################################################
+####                             BOILER - COUNTERS                                      ####
+############################################################################################
+
+r1,boiler,hours_burner_on_CH,CH Burner Hours,,3c,2000,4bd1,ign,s,IGN:1,,,,,,UIN,,hours
+r1,boiler,hours_burner_on_DHW,DHW Burner Hours,,3c,2000,4cd1,ign,s,IGN:1,,,,,,UIN,,hours
+r,boiler,hours_pump_on,Pump Hours,,3c,2000,42d2,ign,s,IGN:1,,,,,,UIN,,hours
+r,boiler,ignition_cycles,Ignition Cycles,,3c,2000,42d8,ign,s,IGN:1,,,,,,UIN
+r,boiler,diverter_cycles,Diverter Cycles,,3c,2000,40d2,ign,s,IGN:1,,,,,,UIN
+r,boiler,flame_lift_offs,Flame Lift Offs,,3c,2000,46d1,ign,s,IGN:1,,,,,,UIN
+r,boiler,boiler_circulation_cycles,Circulation Cycles,,3c,2000,44d2,ign,s,IGN:1,,,,,,UIN
+r1,boiler,boiler_fan_cycles,Fan Cycles,,3c,2000,4CD2,ign,s,IGN:1,,,,,,UIN
+r,boiler,boiler_life_time,Boiler Life Time,,3c,2000,50d9,ign,s,IGN:1,,,,,,UIN,,min
+
+############################################################################################
+####                             BOILER - SETTINGS (read-only)                          ####
+############################################################################################
+
+r1,boiler,nominal_power,Nominal Power,,3c,2000,6829,ign,s,IGN:1,,,,,s,UCH,,kW
+r,boiler,boiler_type,Boiler Type,,3c,2000,c428,ign,s,IGN:1,,,,,s,UCH,0=mixed_instant;1=ext_tank_ntc;2=ext_tank_thermostat;3=micro_storage;4=stratification_storage;6=storage
+r1,boiler,pump_operation,Pump Operation,,3c,2000,c228,ign,s,IGN:1,,,,,s,UCH,0=low_speed;1=high_speed;2=modulating
+r,boiler,pump_current_modulation,Pump Modulation,,3c,2000,c300,ign,s,IGN:1,,,,,,UCH,,pct
+r1,boiler,boiler_current_modulation,Boiler Gas Modulation,,3c,2000,c404,ign,s,IGN:1,,,,,,UCH
+r,boiler,heat_max_power_pct,Max Heating Power,,3c,2000,6329,ign,s,IGN:1,,,,,s,UIN,,pct
+r,boiler,heat_min_power_pct,Min Heating Power,,3c,2000,6429,ign,s,IGN:1,,,,,s,UIN,,pct
+r,boiler,dhw_max_power_pct,Max DHW Power,,3c,2000,6229,ign,s,IGN:1,,,,,s,UIN,,pct
+r1,boiler,warning_pressure,Warning Pressure,,3c,2000,c12a,ign,s,IGN:1,,,,,s,UCH,10,bar
+r1,boiler,heat_post_circulation,Post Circulation,,3c,2000,c227,ign,s,IGN:1,,,,,s,UCH,,min
+r,boiler,fan_speed,Fan Speed,,3c,2000,4013,,s,IGN:1,,,,,,UIN,,rpm
+
+############################################################################################
+####                             BOILER - MAINTENANCE                                   ####
+############################################################################################
+
+r1,boiler,maintenance_months,Months to Maintenance,,3c,2001,c627,,s,UCH
+w,boiler,maintenance_months,Months to Maintenance,,3c,2020,c627,,m,UCH
+r1,boiler,maintenance_warnings_enabled,Maintenance Warnings,,3c,2001,0e20,,s,onoff
+w,boiler,maintenance_warnings_enabled,Maintenance Warnings,,3c,2020,0e20,,m,onoff
+
+############################################################################################
+####                             SENSYS                                                 ####
+############################################################################################
+
+r,sensys,boiler_sw_version,Boiler SW Ver,,3c,2002,000000,ign,s,IGN:1,,,,value,s,HEX:3
+
+############################################################################################
+####                             IGNORED BROADCASTS                                     ####
+############################################################################################
+
+b,ignored,ign4,QQfe2051XXXXX,,fe,2051,,ign,,IGN:14
+b,ignored,ign5,QQfe2050XXXXX,,fe,2050,,ign,,IGN:11
+
+b,ignored,ign6,Ign6,,37,2010,0591,ign,,IGN:8
+
+
+
+
+# External temperature - broadcast PBSB=2010, ID=7647
+# Confirmed: 37fe20100d7647[400100]... = 0x0140/10 = 32.0°C matches ext_temp_bc
+
+# DHW comfort setpoint - broadcast PBSB=2010, ID=6147
+# 37fe2010096147[5000]00... = 0x0050 = 80°C (DHW setpoint)
+
+
+# External temperature - QQ=37(Sensys), ZZ=fe(broadcast), PBSB=2010, ID=7647
+# 37fe20100d 7647 [4101]00... = SIN/10 = 32.1°C confirmed
+b,boiler,ext_temp,External Temp,37,fe,200f,7647,,,SIN,10,°C
+
+
+
+# DHW comfort setpoint - 6126/2020 = 40.0°C confirmed when set to 40
+b,boiler,dhw_comfort_temp,DHW Comfort Temp,37,fe,200e,6126,,,SIN,10,°C
+
+# DHW economy setpoint - 6226/2020 = 10.0°C
+b,boiler,dhw_economy_temp,DHW Economy Temp,37,fe,2020,6226,,,SIN,10,°C
+
+# CH day setpoint - 6376/2020 = 16.0°C
+b,boiler,ch_day_temp,CH Day Setpoint,37,fe,2020,6376,,,SIN,10,°C
+
+
+# DHW current target temp - from original ariston.csv energymgr section
+b,boiler,dhw_current_target_temp,DHW Current Target Temp,,fe,2010,6147,,,UCH,2,°C
+
+
+############################################################################################
+####                             WRITE - CONTROL                                        ####
+############################################################################################
+
+# DHW comfort temp write - UCH/2 (40°C = 0x50 = 80/2)
+
+
+############################################################################################
+####                         CONTROL - WRITE (ZZ=fe, PBSB=2020)                        ####
+############################################################################################
+
+# Heating / DHW / Cooling on-off
+b,boiler,heating_status,Heating Status,37,fe,200f,0120,,,onoff
+w,boiler,heating_status,Heating Status,,fe,2020,0120,,s,onoff
+b,boiler,dhw_status,DHW Status,37,fe,200f,0220,,,onoff
+w,boiler,dhw_status,DHW Status,,fe,2020,0220,,s,onoff
+b,boiler,thermoregulation_switch,Thermoregulation Switch,37,fe,200f,0520,,,onoff
+w,boiler,thermoregulation_switch,Thermoregulation Switch,,fe,2020,0520,,s,onoff
+
+# DHW temperatures
+w,boiler,dhw_comfort_temp_set,DHW Comfort Temp,,fe,2020,6126,,s,SIN,10,°C
+w,boiler,dhw_economy_temp_set,DHW Economy Temp,,fe,2020,6226,,s,SIN,10,°C
+b,boiler,dhw_comfort_mode,DHW Comfort Mode,,fe,200e,c028,,,BCD,0=off;1=timed;2=always_on
+w,boiler,dhw_comfort_mode,DHW Comfort Mode,,fe,2020,c028,,s,BCD,0=off;1=timed;2=always_on
+
+# CH setpoints zona 1
+w,boiler,z1_day_temp_set,Z1 Day Temp,,fe,2020,6271,,s,SIN,10,°C
+w,boiler,z1_night_temp_set,Z1 Night Temp,,fe,2020,6371,,s,SIN,10,°C
+w,boiler,z1_heat_setpoint_set,Z1 Heat Setpoint,,fe,2020,6571,,s,SIN,10,°C
+b,boiler,z1_setpoint_temp,Z1 Current Setpoint,,fe,200f,6996,,,SIN,10,°C
+b,boiler,ch_flow_setpoint,CH Flow Setpoint,37,fe,200f,6197,,,SIN,10,°C
+b,boiler,z1_heat_request,Z1 Heating Request,37,fe,2010,0191,,,BCD,0=off;1=on
+
+# CH thermoregulation zona 1
+w,boiler,z1_heat_water_max_temp_set,Z1 Max Water Temp,,fe,2020,6071,,s,SIN,10,°C
+w,boiler,z1_heat_water_min_temp_set,Z1 Min Water Temp,,fe,2020,6171,,s,SIN,10,°C
+
+
+# Thermoregulation type + read slope/offset
+b,boiler,z1_heat_therm_type,Z1 Therm Type,,fe,200e,C079,,,UCH,0=fixed_temp;1=on_off_device;2=room_probe_only;3=outdoor_probe_only;4=outdoor_and_room
+w,boiler,z1_heat_therm_type,Z1 Therm Type,,fe,2020,C079,,s,UCH,0=fixed_temp;1=on_off_device;2=room_probe_only;3=outdoor_probe_only;4=outdoor_and_room
+
+b,boiler,z1_heat_slope,Z1 Heat Slope,37,fe,200e,6473,ign,,IGN:4,,,,,,UIN,100
+
+# Offset write - pereche cu broadcast z1_heat_thermoreg (camp 0 = offset)
+w,boiler,z1_heat_offset_set,Z1 Heat Offset,,fe,2020,6471,,s,SIN,10,°C
+b,boiler,z1_heat_offset,Z1 Heat Offset,37,fe,200e,6471,,,SIN,10
+
+# Definit ca circuit "boilerslope" ca sa evite duplicatele
+
+
+
+# === TEST READ ACTIV DHW (temporar) ===
+# (removed invalid test_dhw_comfort line)
