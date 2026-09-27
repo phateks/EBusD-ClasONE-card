@@ -386,23 +386,28 @@ export const styles = css`
     }
 
     .header {
-      flex-wrap: wrap;
-      align-items: stretch;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .title-wrap {
-      flex: 0 0 100%;
-      width: 100%;
+      grid-column: 1 / -1;
+      width: auto;
       min-width: 0;
       box-sizing: border-box;
     }
 
     .badge {
       padding: 6px 10px;
-      flex: 1 1 auto;
+      width: 100%;
+      flex: 0 1 auto;
       justify-content: center;
       min-width: 0;
+      box-sizing: border-box;
     }
 
     .flow-row {
