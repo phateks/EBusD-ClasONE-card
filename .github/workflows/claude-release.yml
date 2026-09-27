@@ -1,0 +1,35 @@
+name: Claude Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versiune (ex: v1.4.0)"
+        required: true
+
+permissions:
+  contents: write        # necesar pentru tag + release
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # istoric complet, pentru changelog
+
+      - uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # sau: anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Pregătește release-ul ${{ inputs.version }}:
+            1. Găsește ultimul tag și citește commit-urile de atunci.
+            2. Actualizează CHANGELOG.md și versiunea din proiect, apoi fă commit.
+            3. Creează tag-ul și fă push.
+            4. Rulează `gh release create ${{ inputs.version }}` cu release notes grupate
+               (Features / Fixes / Breaking changes).
+          claude_args: >-
+            --allowedTools "Bash(git:*),Bash(gh release:*),Edit,Read,Write"
