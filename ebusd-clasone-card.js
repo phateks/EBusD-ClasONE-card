@@ -390,8 +390,10 @@ function t(t,e,s,i){var r,o=arguments.length,n=o<3?e:null===i?i=Object.getOwnPro
     }
 
     .title-wrap {
-      flex: 1 1 100%;
+      flex: 0 0 100%;
+      width: 100%;
       min-width: 0;
+      box-sizing: border-box;
     }
 
     .badge {

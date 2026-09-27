@@ -392,8 +392,10 @@ export const styles = css`
     }
 
     .title-wrap {
-      flex: 1 1 100%;
+      flex: 0 0 100%;
+      width: 100%;
       min-width: 0;
+      box-sizing: border-box;
     }
 
     .badge {
