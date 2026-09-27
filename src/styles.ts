@@ -576,6 +576,52 @@ export const styles = css`
     }
   }
 
+  @media (max-width: 760px) {
+    .header {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .title-wrap {
+      grid-column: 1;
+      width: 100%;
+      min-width: 0;
+      flex: none;
+      box-sizing: border-box;
+    }
+
+    .header-controls {
+      display: grid;
+      grid-column: 1;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .header-controls .badge {
+      width: 100%;
+      min-width: 0;
+      flex: none;
+      gap: 5px;
+      padding: 6px 4px;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+
+    .header-controls .lbl {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-size: clamp(8px, 2.4vw, 10px);
+    }
+  }
+
   ha-icon.clickable { cursor: pointer; }
   .unit.clickable { cursor: pointer; }
 `;
