@@ -2,6 +2,10 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
+    display: block;
+    min-width: 0;
+    container-name: boiler-card;
+    container-type: inline-size;
     --bc-accent: #4ecdc4;
     --bc-ch: #ff8a5c;
     --bc-dhw: #4ecdc4;
@@ -280,7 +284,7 @@ export const styles = css`
   .sp-val.display-only { padding: 4px 0; }
   .pressure-mobile { display: none; }
 
-  @media (max-width: 620px) {
+  @container boiler-card (max-width: 760px) {
     ha-card {
       padding: 12px;
       overflow: hidden;
@@ -429,7 +433,7 @@ export const styles = css`
     }
   }
 
-  @media (max-width: 420px) {
+  @container boiler-card (max-width: 420px) {
     .title-text {
       font-size: 12px;
       letter-spacing: 0.7px;
