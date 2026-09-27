@@ -7,10 +7,10 @@ Shows, in one compact card:
 - **Status** badge (IDLE / CH HEATING / DHW HEATING) derived from the boiler status sensor
 - **CH** and **Thermoregulation** toggles in the header
 - **Flame** power (kW) with an animated flame when burning
-- **TUR / RETUR** (flow / return) temperatures
+- **TUR / RETUR** (flow / return) and optional outdoor temperatures
+- **Pressure** (bar)
 - **Thermoregulation offset** (−14…+14) with a slider, plus the **computed flow setpoint** shown next to the title when thermoregulation is active
 - **DHW setpoint** and **CH setpoint** with −/+ controls
-- **Pressure** (bar)
 
 All entities are configurable through a visual editor — nothing is hardcoded.
 
@@ -48,6 +48,8 @@ thermoreg_entity: switch.heating_ebusd_boiler_thermoregulation_switch
 flame_power_entity: sensor.ebusd_boiler_flame_power_kw
 flow_temp_entity: sensor.ebusd_boiler_lwt_temp
 return_temp_entity: sensor.ebusd_boiler_ewt_temp
+# Optional outdoor temperature sensor from your Home Assistant setup
+outdoor_temp_entity: sensor.outdoor_temperature
 offset_entity: number.ariston_heating_flow_offset_1
 offset_min: -14
 offset_max: 14
@@ -76,6 +78,7 @@ pressure_entity: sensor.ebusd_boiler_boiler_pressure
 | `flame_power_entity` | sensor | — | Flame power in kW (animates when > 0.1) |
 | `flow_temp_entity` | sensor | — | Flow (TUR) temperature |
 | `return_temp_entity` | sensor | — | Return (RETUR) temperature |
+| `outdoor_temp_entity` | sensor | — | Optional outdoor temperature |
 | `offset_entity` | number | — | Thermoregulation flow offset |
 | `offset_min` / `offset_max` / `offset_step` | number | −14 / 14 / 2 | Offset slider range |
 | `computed_setpoint_entity` | sensor | — | Computed flow setpoint, shown next to the title when thermoregulation is on |

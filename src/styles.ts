@@ -282,7 +282,68 @@ export const styles = css`
   .step-btn:active { transform: scale(0.95); }
   .sp-val { font-size: 28px; font-weight: 700; }
   .sp-val.display-only { padding: 4px 0; }
-  .pressure-mobile { display: none; }
+  .flow-row {
+    display: grid;
+    grid-template-columns: 124px repeat(2, minmax(0, 1fr)) 260px;
+    grid-template-rows: repeat(2, minmax(76px, 1fr));
+    gap: 8px;
+    margin-bottom: 12px;
+    align-items: stretch;
+  }
+
+  .flow-row > .unit {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .flow-row > .pipes {
+    display: contents;
+  }
+
+  .flow-row > .pipe.tur {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .flow-row > .pipe.retur {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .flow-row > .outdoor-temp {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .flow-row > .pressure-card {
+    grid-column: 3;
+    grid-row: 2;
+    background: var(--bc-box-bg);
+    border-left: 3px solid var(--bc-green);
+    cursor: pointer;
+  }
+
+  .flow-row > .tile-wide {
+    grid-column: 2 / span 2;
+  }
+
+  .flow-row > .offset-box {
+    grid-column: 4;
+    grid-row: 1 / span 2;
+    width: auto;
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  .pressure-card .sp-head {
+    gap: 6px;
+  }
+
+  .pressure-card .plabel {
+    font-size: 11px;
+  }
 
   @container boiler-card (max-width: 760px) {
     ha-card {
@@ -309,10 +370,9 @@ export const styles = css`
     }
 
     .flow-row {
-      display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-rows: repeat(3, minmax(76px, auto));
       gap: 8px;
-      align-items: stretch;
     }
 
     .unit,
@@ -330,11 +390,7 @@ export const styles = css`
       min-width: 0;
       padding: 10px 8px;
       grid-column: 1;
-      grid-row: 1;
-    }
-
-    .pipes {
-      display: contents;
+      grid-row: 1 / span 2;
     }
 
     .pipe {
@@ -355,6 +411,22 @@ export const styles = css`
       grid-row: 1;
     }
 
+    .flow-row > .outdoor-temp {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .flow-row > .pressure-card {
+      grid-column: 3;
+      grid-row: 2;
+      justify-content: center;
+      align-self: stretch;
+    }
+
+    .flow-row > .tile-wide {
+      grid-column: 2 / span 2;
+    }
+
     .pipe .plabel {
       font-size: 11px;
       letter-spacing: 0.7px;
@@ -368,8 +440,8 @@ export const styles = css`
 
     .offset-box {
       flex-basis: auto;
-      grid-column: 1 / span 2;
-      grid-row: 2;
+      grid-column: 1 / -1;
+      grid-row: 3;
       width: 100%;
       min-width: 0;
       margin-top: 4px;
@@ -385,18 +457,6 @@ export const styles = css`
       font-size: 22px;
     }
 
-    .pressure-desktop {
-      display: none;
-    }
-
-    .pressure-mobile {
-      display: flex;
-      grid-column: 3;
-      grid-row: 2;
-      justify-content: center;
-      align-self: stretch;
-    }
-
     .setpoints {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -409,10 +469,6 @@ export const styles = css`
       min-width: 0;
       padding: 10px 8px;
       overflow: hidden;
-    }
-
-    .setpoints > .sp-card:last-child {
-      grid-column: 1 / -1;
     }
 
     .sp-head .t {

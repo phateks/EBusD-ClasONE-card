@@ -222,10 +222,26 @@ export class EbusdClasOneCard extends LitElement {
           </div>
         </div>
 
-        ${this.renderOffset()}
-        ${c.pressure_entity
-          ? this.renderPressure(c.pressure_entity, true)
+        ${c.outdoor_temp_entity
+          ? this.renderOutdoorTemperature(c.outdoor_temp_entity, !c.pressure_entity)
           : nothing}
+        ${c.pressure_entity
+          ? this.renderPressure(c.pressure_entity, !c.outdoor_temp_entity)
+          : nothing}
+        ${this.renderOffset()}
+      </div>
+    `;
+  }
+
+  private renderOutdoorTemperature(entity: string, alone: boolean): TemplateResult {
+    const temperature = this.num(entity);
+    return html`
+      <div
+        class="pipe outdoor-temp clickable ${alone ? "tile-wide" : ""}"
+        @click=${() => this.moreInfo(entity)}
+      >
+        <span class="plabel">EXT</span>
+        <span class="pval">${this.fmt(temperature)}</span>
       </div>
     `;
   }
@@ -296,9 +312,6 @@ export class EbusdClasOneCard extends LitElement {
           c.ch_step ?? 1,
           chDisabled
         )}
-        ${c.pressure_entity
-          ? this.renderPressure(c.pressure_entity)
-          : nothing}
       </div>
     `;
   }
@@ -339,24 +352,23 @@ export class EbusdClasOneCard extends LitElement {
     `;
   }
 
-  private renderPressure(entity: string, mobile = false): TemplateResult {
+  private renderPressure(entity: string, alone: boolean): TemplateResult {
     const p = this.num(entity);
     return html`
-      <div class="sp-card pressure-card ${mobile ? "pressure-mobile" : "pressure-desktop"}">
+      <div class="pipe pressure-card ${alone ? "tile-wide" : ""}">
         <div class="sp-head">
           <ha-icon icon="mdi:gauge" style="color:#5dcaa5;"></ha-icon>
-          <span class="t">PRESIUNE</span>
+          <span class="plabel">PRESIUNE</span>
         </div>
         <div
-          class="sp-val display-only clickable"
+          class="pval clickable"
           style="color:#5dcaa5;"
           @click=${() => this.moreInfo(entity)}
         >
           ${p === undefined ? "—" : p.toFixed(1)}<span
             style="font-size:14px;color:#8aa0bd;font-weight:600;"
           >
-            bar</span
-          >
+            bar</span>
         </div>
       </div>
     `;

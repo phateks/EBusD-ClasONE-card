@@ -30,6 +30,10 @@ const SCHEMA = [
     selector: { entity: { domain: ["sensor"] } },
   },
   {
+    name: "outdoor_temp_entity",
+    selector: { entity: { domain: ["sensor"] } },
+  },
+  {
     name: "offset_entity",
     selector: { entity: { domain: ["number", "input_number"] } },
   },
@@ -94,6 +98,7 @@ const LABELS: Record<string, string> = {
   flame_power_entity: "Putere flacără (kW)",
   flow_temp_entity: "Temperatură TUR",
   return_temp_entity: "Temperatură RETUR",
+  outdoor_temp_entity: "Temperatură exterioară",
   offset_entity: "Offset termoreglare (number, -14..+14)",
   computed_setpoint_entity: "Setpoint TUR calculat (sensor)",
   offset_min: "Offset min",
