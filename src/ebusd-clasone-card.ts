@@ -170,36 +170,38 @@ export class EbusdClasOneCard extends LitElement {
             : nothing}
         </div>
 
-        ${c.ch_switch_entity
-          ? html`<div
-              class="badge"
-              style="background:${chOn ? "#3a2410" : "var(--bc-box-bg)"};border-color:${chOn
-                ? "#ff8a5c55"
-                : "var(--bc-border)"};"
-              @click=${() => this.toggle(c.ch_switch_entity)}
-            >
-              <ha-icon icon="mdi:radiator" style="color:${chOn ? "#ff8a5c" : "#8aa0bd"};"></ha-icon>
-              <span class="lbl" style="color:${chOn ? "#ff8a5c" : "#8aa0bd"};">CH</span>
-              <span class="dot" style="background:${chOn ? "#ff8a5c" : "#4a5a70"};box-shadow:${chOn
-                ? "0 0 8px #ff8a5c"
-                : "none"};"></span>
-            </div>`
-          : nothing}
+        <div class="header-controls">
+          ${c.ch_switch_entity
+            ? html`<div
+                class="badge"
+                style="background:${chOn ? "#3a2410" : "var(--bc-box-bg)"};border-color:${chOn
+                  ? "#ff8a5c55"
+                  : "var(--bc-border)"};"
+                @click=${() => this.toggle(c.ch_switch_entity)}
+              >
+                <ha-icon icon="mdi:radiator" style="color:${chOn ? "#ff8a5c" : "#8aa0bd"};"></ha-icon>
+                <span class="lbl" style="color:${chOn ? "#ff8a5c" : "#8aa0bd"};">CH</span>
+                <span class="dot" style="background:${chOn ? "#ff8a5c" : "#4a5a70"};box-shadow:${chOn
+                  ? "0 0 8px #ff8a5c"
+                  : "none"};"></span>
+              </div>`
+            : nothing}
 
-        ${c.thermoreg_entity
-          ? html`<div
-              class="badge"
-              style="background:${trOn ? "#163a2a" : "var(--bc-box-bg)"};border-color:${trOn
-                ? "#5dcaa555"
-                : "var(--bc-border)"};"
-              @click=${() => this.toggle(c.thermoreg_entity)}
-            >
-              <span class="dot" style="background:${trOn ? "#5dcaa5" : "#4a5a70"};box-shadow:${trOn
-                ? "0 0 8px #5dcaa5"
-                : "none"};"></span>
-              <span class="lbl" style="color:${trOn ? "#5dcaa5" : "#8aa0bd"};">TERMOREGLARE</span>
-            </div>`
-          : nothing}
+          ${c.thermoreg_entity
+            ? html`<div
+                class="badge"
+                style="background:${trOn ? "#163a2a" : "var(--bc-box-bg)"};border-color:${trOn
+                  ? "#5dcaa555"
+                  : "var(--bc-border)"};"
+                @click=${() => this.toggle(c.thermoreg_entity)}
+              >
+                <span class="dot" style="background:${trOn ? "#5dcaa5" : "#4a5a70"};box-shadow:${trOn
+                  ? "0 0 8px #5dcaa5"
+                  : "none"};"></span>
+                <span class="lbl" style="color:${trOn ? "#5dcaa5" : "#8aa0bd"};">TERMOREGLARE</span>
+              </div>`
+            : nothing}
+        </div>
       </div>
     `;
   }

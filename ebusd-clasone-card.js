@@ -43,6 +43,9 @@ function t(t,e,i,s){var r,o=arguments.length,n=o<3?e:null===s?s=Object.getOwnPro
     flex: 1 1 auto;
     min-width: 0;
   }
+  .header-controls {
+    display: contents;
+  }
   .title-icon {
     width: 30px;
     height: 30px;
@@ -384,6 +387,23 @@ function t(t,e,i,s){var r,o=arguments.length,n=o<3?e:null===s?s=Object.getOwnPro
     }
 
     .header {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .title-wrap {
+      flex: 0 0 auto;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .header-controls {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
@@ -392,17 +412,10 @@ function t(t,e,i,s){var r,o=arguments.length,n=o<3?e:null===s?s=Object.getOwnPro
       box-sizing: border-box;
     }
 
-    .title-wrap {
-      grid-column: 1 / -1;
-      width: auto;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
     .badge {
       padding: 6px 10px;
       width: 100%;
-      flex: 0 1 auto;
+      flex: none;
       justify-content: center;
       min-width: 0;
       box-sizing: border-box;
@@ -583,24 +596,26 @@ function t(t,e,i,s){var r,o=arguments.length,n=o<3?e:null===s?s=Object.getOwnPro
               </div>`:F}
         </div>
 
-        ${t.ch_switch_entity?W`<div
-              class="badge"
-              style="background:${o?"#3a2410":"var(--bc-box-bg)"};border-color:${o?"#ff8a5c55":"var(--bc-border)"};"
-              @click=${()=>this.toggle(t.ch_switch_entity)}
-            >
-              <ha-icon icon="mdi:radiator" style="color:${o?"#ff8a5c":"#8aa0bd"};"></ha-icon>
-              <span class="lbl" style="color:${o?"#ff8a5c":"#8aa0bd"};">CH</span>
-              <span class="dot" style="background:${o?"#ff8a5c":"#4a5a70"};box-shadow:${o?"0 0 8px #ff8a5c":"none"};"></span>
-            </div>`:F}
+        <div class="header-controls">
+          ${t.ch_switch_entity?W`<div
+                class="badge"
+                style="background:${o?"#3a2410":"var(--bc-box-bg)"};border-color:${o?"#ff8a5c55":"var(--bc-border)"};"
+                @click=${()=>this.toggle(t.ch_switch_entity)}
+              >
+                <ha-icon icon="mdi:radiator" style="color:${o?"#ff8a5c":"#8aa0bd"};"></ha-icon>
+                <span class="lbl" style="color:${o?"#ff8a5c":"#8aa0bd"};">CH</span>
+                <span class="dot" style="background:${o?"#ff8a5c":"#4a5a70"};box-shadow:${o?"0 0 8px #ff8a5c":"none"};"></span>
+              </div>`:F}
 
-        ${t.thermoreg_entity?W`<div
-              class="badge"
-              style="background:${n?"#163a2a":"var(--bc-box-bg)"};border-color:${n?"#5dcaa555":"var(--bc-border)"};"
-              @click=${()=>this.toggle(t.thermoreg_entity)}
-            >
-              <span class="dot" style="background:${n?"#5dcaa5":"#4a5a70"};box-shadow:${n?"0 0 8px #5dcaa5":"none"};"></span>
-              <span class="lbl" style="color:${n?"#5dcaa5":"#8aa0bd"};">TERMOREGLARE</span>
-            </div>`:F}
+          ${t.thermoreg_entity?W`<div
+                class="badge"
+                style="background:${n?"#163a2a":"var(--bc-box-bg)"};border-color:${n?"#5dcaa555":"var(--bc-border)"};"
+                @click=${()=>this.toggle(t.thermoreg_entity)}
+              >
+                <span class="dot" style="background:${n?"#5dcaa5":"#4a5a70"};box-shadow:${n?"0 0 8px #5dcaa5":"none"};"></span>
+                <span class="lbl" style="color:${n?"#5dcaa5":"#8aa0bd"};">TERMOREGLARE</span>
+              </div>`:F}
+        </div>
       </div>
     `}renderFlowRow(){const t=this.config,e=this.num(t.flame_power_entity)??0,i=e>.1,s=this.num(t.flow_temp_entity),r=this.num(t.return_temp_entity);return W`
       <div class="flow-row">

@@ -45,6 +45,9 @@ export const styles = css`
     flex: 1 1 auto;
     min-width: 0;
   }
+  .header-controls {
+    display: contents;
+  }
   .title-icon {
     width: 30px;
     height: 30px;
@@ -386,6 +389,23 @@ export const styles = css`
     }
 
     .header {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 8px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .title-wrap {
+      flex: 0 0 auto;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .header-controls {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 8px;
@@ -394,17 +414,10 @@ export const styles = css`
       box-sizing: border-box;
     }
 
-    .title-wrap {
-      grid-column: 1 / -1;
-      width: auto;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
     .badge {
       padding: 6px 10px;
       width: 100%;
-      flex: 0 1 auto;
+      flex: none;
       justify-content: center;
       min-width: 0;
       box-sizing: border-box;
