@@ -284,7 +284,7 @@ export const styles = css`
   .sp-val.display-only { padding: 4px 0; }
   .flow-row {
     display: grid;
-    grid-template-columns: 124px repeat(2, minmax(0, 1fr)) 260px;
+    grid-template-columns: 124px repeat(2, minmax(0, 1fr));
     grid-template-rows: repeat(2, minmax(76px, 1fr));
     gap: 8px;
     margin-bottom: 12px;
@@ -330,9 +330,9 @@ export const styles = css`
   }
 
   .flow-row > .offset-box {
-    grid-column: 4;
-    grid-row: 1 / span 2;
-    width: auto;
+    grid-column: 1 / -1;
+    grid-row: 3;
+    width: 100%;
     min-width: 0;
     box-sizing: border-box;
   }
@@ -371,7 +371,7 @@ export const styles = css`
 
     .flow-row {
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-template-rows: repeat(3, minmax(76px, auto));
+      grid-template-rows: repeat(2, minmax(76px, auto));
       gap: 8px;
     }
 
@@ -438,7 +438,7 @@ export const styles = css`
       line-height: 1.1;
     }
 
-    .offset-box {
+    .flow-row > .offset-box {
       flex-basis: auto;
       grid-column: 1 / -1;
       grid-row: 3;
