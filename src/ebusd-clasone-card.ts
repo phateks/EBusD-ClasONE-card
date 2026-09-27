@@ -267,7 +267,11 @@ export class EbusdClasOneCard extends LitElement {
         @click=${() => this.moreInfo(entity)}
       >
         <span class="tile-label">${label}</span>
-        <span class="tile-value">${this.fmt(temperature)}</span>
+        <span class="tile-value">
+          ${className === "outdoor-temp"
+            ? this.fmt(temperature, 1, "°C")
+            : this.fmt(temperature)}
+        </span>
       </div>
     `;
   }
