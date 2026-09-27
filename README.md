@@ -65,6 +65,10 @@ ch_min: 30
 ch_max: 80
 ch_step: 1
 pressure_entity: sensor.ebusd_boiler_boiler_pressure
+flow_temp_label: TUR
+return_temp_label: RETUR
+outdoor_temp_label: EXT
+pressure_label: PRESIUNE
 ```
 
 ## Configuration options
@@ -79,6 +83,10 @@ pressure_entity: sensor.ebusd_boiler_boiler_pressure
 | `flow_temp_entity` | sensor | — | Flow (TUR) temperature |
 | `return_temp_entity` | sensor | — | Return (RETUR) temperature |
 | `outdoor_temp_entity` | sensor | — | Optional outdoor temperature |
+| `flow_temp_label` | string | `TUR` | Custom label for the flow temperature tile |
+| `return_temp_label` | string | `RETUR` | Custom label for the return temperature tile |
+| `outdoor_temp_label` | string | `EXT` | Custom label for the outdoor temperature tile |
+| `pressure_label` | string | `PRESIUNE` | Custom label for the pressure tile |
 | `offset_entity` | number | — | Thermoregulation flow offset |
 | `offset_min` / `offset_max` / `offset_step` | number | −14 / 14 / 2 | Offset slider range |
 | `computed_setpoint_entity` | sensor | — | Computed flow setpoint, shown next to the title when thermoregulation is on |

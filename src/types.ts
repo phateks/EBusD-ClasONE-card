@@ -17,6 +17,10 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   flow_temp_entity?: string; // TUR  (sensor.ebusd_boiler_lwt_temp)
   return_temp_entity?: string; // RETUR (sensor.ebusd_boiler_ewt_temp)
   outdoor_temp_entity?: string; // Outdoor temperature sensor
+  flow_temp_label?: string;
+  return_temp_label?: string;
+  outdoor_temp_label?: string;
+  pressure_label?: string;
 
   // Offset / thermoregulation
   offset_entity?: string; // number.ariston_heating_flow_offset_1

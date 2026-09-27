@@ -312,6 +312,39 @@ export const styles = css`
     grid-row: 1;
   }
 
+  .flow-row > .sensor-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+    padding: 10px 12px;
+  }
+
+  .sensor-tile .tile-label {
+    align-self: flex-start;
+    color: var(--bc-sub);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+
+  .sensor-tile .tile-value {
+    align-self: center;
+    color: var(--bc-txt);
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.1;
+    margin: auto 0;
+    text-align: center;
+  }
+
+  .flow-row > .pipe.tur .tile-value { color: var(--bc-ch); }
+  .flow-row > .pipe.retur .tile-value { color: var(--bc-dhw); }
+  .flow-row > .outdoor-temp .tile-value { color: var(--bc-txt); }
+
   .flow-row > .outdoor-temp {
     grid-column: 2;
     grid-row: 2;
@@ -325,6 +358,16 @@ export const styles = css`
     cursor: pointer;
   }
 
+  .pressure-value {
+    color: var(--bc-green) !important;
+  }
+
+  .pressure-value span {
+    color: var(--bc-sub);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
   .flow-row > .tile-wide {
     grid-column: 2 / span 2;
   }
@@ -334,14 +377,6 @@ export const styles = css`
     min-width: 0;
     box-sizing: border-box;
     margin: 0 0 12px;
-  }
-
-  .pressure-card .sp-head {
-    gap: 6px;
-  }
-
-  .pressure-card .plabel {
-    font-size: 11px;
   }
 
   @container boiler-card (max-width: 760px) {
@@ -399,6 +434,19 @@ export const styles = css`
       gap: 6px;
     }
 
+    .flow-row > .sensor-tile {
+      padding: 9px 8px;
+    }
+
+    .sensor-tile .tile-label {
+      font-size: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .sensor-tile .tile-value {
+      font-size: clamp(18px, 5vw, 24px);
+    }
+
     .pipe.tur {
       grid-column: 2;
       grid-row: 1;
@@ -423,17 +471,6 @@ export const styles = css`
 
     .flow-row > .tile-wide {
       grid-column: 2 / span 2;
-    }
-
-    .pipe .plabel {
-      font-size: 11px;
-      letter-spacing: 0.7px;
-      white-space: nowrap;
-    }
-
-    .pipe .pval {
-      font-size: clamp(18px, 5vw, 24px);
-      line-height: 1.1;
     }
 
     ha-card > .offset-box {
@@ -510,12 +547,7 @@ export const styles = css`
       padding: 9px 6px;
     }
 
-    .pipe .plabel {
-      font-size: 10px;
-      letter-spacing: 0.4px;
-    }
-
-    .pipe .pval {
+    .sensor-tile .tile-value {
       font-size: clamp(16px, 4.5vw, 20px);
     }
 

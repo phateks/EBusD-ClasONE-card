@@ -48,7 +48,11 @@ export class EbusdClasOneCard extends LitElement {
       thermoreg_entity: "switch.heating_ebusd_boiler_thermoregulation_switch",
       flame_power_entity: "sensor.ebusd_boiler_flame_power_kw",
       flow_temp_entity: "sensor.ebusd_boiler_lwt_temp",
+      flow_temp_label: "TUR",
       return_temp_entity: "sensor.ebusd_boiler_ewt_temp",
+      return_temp_label: "RETUR",
+      outdoor_temp_label: "EXT",
+      pressure_label: "PRESIUNE",
       offset_entity: "number.ariston_heating_flow_offset_1",
       offset_min: -14,
       offset_max: 14,
@@ -81,6 +85,10 @@ export class EbusdClasOneCard extends LitElement {
       ch_step: 1,
       title: "ARISTON CLAS ONE",
       ...config,
+      flow_temp_label: config.flow_temp_label ?? "TUR",
+      return_temp_label: config.return_temp_label ?? "RETUR",
+      outdoor_temp_label: config.outdoor_temp_label ?? "EXT",
+      pressure_label: config.pressure_label ?? "PRESIUNE",
     };
   }
 
@@ -215,35 +223,49 @@ export class EbusdClasOneCard extends LitElement {
         </div>
 
         <div class="pipes">
-          <div class="pipe tur" @click=${() => this.moreInfo(c.flow_temp_entity)}>
-            <span class="plabel">TUR</span>
-            <span class="pval">${this.fmt(tur)}</span>
-          </div>
-          <div class="pipe retur" @click=${() => this.moreInfo(c.return_temp_entity)}>
-            <span class="plabel">RETUR</span>
-            <span class="pval">${this.fmt(retur)}</span>
-          </div>
+          ${this.renderTemperatureTile(c.flow_temp_entity, c.flow_temp_label ?? "TUR", tur, "tur")}
+          ${this.renderTemperatureTile(
+            c.return_temp_entity,
+            c.return_temp_label ?? "RETUR",
+            retur,
+            "retur"
+          )}
         </div>
 
         ${c.outdoor_temp_entity
-          ? this.renderOutdoorTemperature(c.outdoor_temp_entity, !c.pressure_entity)
+          ? this.renderTemperatureTile(
+              c.outdoor_temp_entity,
+              c.outdoor_temp_label ?? "EXT",
+              this.num(c.outdoor_temp_entity),
+              "outdoor-temp",
+              !c.pressure_entity
+            )
           : nothing}
         ${c.pressure_entity
-          ? this.renderPressure(c.pressure_entity, !c.outdoor_temp_entity)
+          ? this.renderPressure(
+              c.pressure_entity,
+              c.pressure_label ?? "PRESIUNE",
+              !c.outdoor_temp_entity
+            )
           : nothing}
       </div>
     `;
   }
 
-  private renderOutdoorTemperature(entity: string, alone: boolean): TemplateResult {
-    const temperature = this.num(entity);
+  private renderTemperatureTile(
+    entity: string | undefined,
+    label: string,
+    temperature: number | undefined,
+    className: string,
+    alone = false
+  ): TemplateResult {
     return html`
       <div
-        class="pipe outdoor-temp clickable ${alone ? "tile-wide" : ""}"
+        class="pipe sensor-tile ${className} clickable ${alone ? "tile-wide" : ""}"
         @click=${() => this.moreInfo(entity)}
       >
-        <span class="plabel">EXT</span>
-        <span class="pval">${this.fmt(temperature)}</span>
+        <span class="tile-label">${label}</span>
+        <span class="tile-value">${this.fmt(temperature)}</span>
       </div>
     `;
   }
@@ -354,24 +376,17 @@ export class EbusdClasOneCard extends LitElement {
     `;
   }
 
-  private renderPressure(entity: string, alone: boolean): TemplateResult {
+  private renderPressure(entity: string, label: string, alone: boolean): TemplateResult {
     const p = this.num(entity);
     return html`
-      <div class="pipe pressure-card ${alone ? "tile-wide" : ""}">
-        <div class="sp-head">
-          <ha-icon icon="mdi:gauge" style="color:#5dcaa5;"></ha-icon>
-          <span class="plabel">PRESIUNE</span>
-        </div>
-        <div
-          class="pval clickable"
-          style="color:#5dcaa5;"
-          @click=${() => this.moreInfo(entity)}
-        >
-          ${p === undefined ? "—" : p.toFixed(1)}<span
-            style="font-size:14px;color:#8aa0bd;font-weight:600;"
-          >
-            bar</span>
-        </div>
+      <div
+        class="pipe sensor-tile pressure-card ${alone ? "tile-wide" : ""} clickable"
+        @click=${() => this.moreInfo(entity)}
+      >
+        <span class="tile-label">${label}</span>
+        <span class="tile-value pressure-value">
+          ${p === undefined ? "—" : p.toFixed(1)}<span> bar</span>
+        </span>
       </div>
     `;
   }
