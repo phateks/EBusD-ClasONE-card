@@ -17,6 +17,31 @@ export const styles = css`
     --bc-box-bg: transparent;
     --bc-border: #26425f;
     --bc-radius: 18px;
+    --bc-title: #cbd9ea;
+    --bc-muted: #4a5a70;
+    --bc-ticks: #5a6f88;
+    --bc-flame-idle: #3a4a60;
+    --bc-btn-bg: #1d314f;
+    --bc-btn-hover: #25425f;
+    --bc-ch-on-bg: #3a2410;
+    --bc-tr-on-bg: #163a2a;
+    --bc-alarm: #ff5c5c;
+  }
+
+  /* Light HA theme: keep the accents, switch text/borders to theme colours. */
+  :host([light]) {
+    --bc-txt: var(--primary-text-color, #1c2733);
+    --bc-sub: var(--secondary-text-color, #5b6b7d);
+    --bc-title: var(--primary-text-color, #1c2733);
+    --bc-border: var(--divider-color, #c9d5e2);
+    --bc-muted: #b4c0cd;
+    --bc-ticks: #7d8c9c;
+    --bc-flame-idle: #b4c0cd;
+    --bc-btn-bg: #e3ebf5;
+    --bc-btn-hover: #d3dfec;
+    --bc-ch-on-bg: #ffe9df;
+    --bc-tr-on-bg: #dcf5ec;
+    --bc-alarm: #d93838;
   }
 
   ha-card {
@@ -66,7 +91,7 @@ export const styles = css`
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 1px;
-    color: #cbd9ea;
+    color: var(--bc-title);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -78,6 +103,16 @@ export const styles = css`
     border-radius: 8px;
     padding: 3px 10px;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+  }
+  .status-badge ha-icon { --mdc-icon-size: 14px; }
+  .status-badge.offline { animation: pulse 1.6s ease-in-out infinite; }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.55; }
   }
   .badge {
     display: flex;
@@ -98,20 +133,26 @@ export const styles = css`
     font-size: 10px;
     letter-spacing: 0.5px;
     font-weight: 600;
+    color: var(--bc-sub);
   }
+  .badge ha-icon { color: var(--bc-sub); }
   .dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #4a5a70;
+    flex-shrink: 0;
+    background: var(--bc-muted);
   }
+  .badge.ch.on { background: var(--bc-ch-on-bg); border-color: #ff8a5c55; }
+  .badge.ch.on ha-icon,
+  .badge.ch.on .lbl { color: var(--bc-ch); }
+  .badge.ch.on .dot { background: var(--bc-ch); box-shadow: 0 0 8px var(--bc-ch); }
+  .badge.tr.on { background: var(--bc-tr-on-bg); border-color: #5dcaa555; }
+  .badge.tr.on .lbl { color: var(--bc-green); }
+  .badge.tr.on .dot { background: var(--bc-green); box-shadow: 0 0 8px var(--bc-green); }
+  .badge.unavailable { opacity: 0.45; cursor: not-allowed; }
 
   /* ---------- Flow row ---------- */
-  .flow-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
   .unit {
     flex: 0 0 124px;
     background: var(--bc-box-bg);
@@ -134,14 +175,14 @@ export const styles = css`
   }
   .unit-icons .boiler {
     --mdc-icon-size: 32px;
-    color: #8aa0bd;
+    color: var(--bc-sub);
   }
   .unit-icons .flame {
     position: absolute;
     bottom: -2px;
     right: -2px;
     --mdc-icon-size: 18px;
-    color: #3a4a60;
+    color: var(--bc-flame-idle);
   }
   .unit-icons .flame.burning {
     color: #ff8a5c;
@@ -163,12 +204,6 @@ export const styles = css`
     color: var(--bc-ch);
   }
 
-  .pipes {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
   .pipe {
     background: var(--bc-box-bg);
     border: 1px solid var(--bc-border);
@@ -183,13 +218,8 @@ export const styles = css`
   }
   .pipe.tur { border-left: 3px solid var(--bc-ch); }
   .pipe.retur { border-left: 3px solid #4ecdc4; }
-  .pipe .plabel { font-size: 13px; font-weight: 700; color: var(--bc-sub); letter-spacing: 1px; }
-  .pipe .pval { font-size: 24px; font-weight: 700; }
-  .pipe.tur .pval { color: var(--bc-ch); }
-  .pipe.retur .pval { color: #4ecdc4; }
 
   .offset-box {
-    flex: 0 0 260px;
     background: var(--bc-box-bg);
     border: 1px solid #5dcaa533;
     border-radius: 14px;
@@ -229,7 +259,7 @@ export const styles = css`
     display: flex;
     justify-content: space-between;
     font-size: 10px;
-    color: #5a6f88;
+    color: var(--bc-ticks);
     padding: 0 2px;
   }
 
@@ -272,7 +302,7 @@ export const styles = css`
     width: 44px;
     height: 34px;
     border-radius: 11px;
-    background: #1d314f;
+    background: var(--bc-btn-bg);
     border: none;
     color: var(--bc-txt);
     font-size: 20px;
@@ -281,10 +311,13 @@ export const styles = css`
     align-items: center;
     justify-content: center;
   }
-  .step-btn:hover { background: #25425f; }
-  .step-btn:active { transform: scale(0.95); }
-  .sp-val { font-size: 28px; font-weight: 700; }
-  .sp-val.display-only { padding: 4px 0; }
+  .step-btn:hover:not(:disabled) { background: var(--bc-btn-hover); }
+  .step-btn:active:not(:disabled) { transform: scale(0.95); }
+  .step-btn:disabled { opacity: 0.4; cursor: default; }
+  .sp-val { font-size: 28px; font-weight: 700; transition: opacity 0.2s; }
+  /* Value clicked/dragged but not yet confirmed by the boiler. */
+  .sp-val.pending,
+  .offset-value.pending { opacity: 0.6; }
   .flow-row {
     display: grid;
     grid-template-columns: 124px repeat(2, minmax(0, 1fr));
@@ -369,6 +402,30 @@ export const styles = css`
     color: var(--bc-sub);
     font-size: 14px;
     font-weight: 600;
+  }
+
+  .flow-row > .pressure-card.alarm {
+    border-color: var(--bc-alarm);
+    border-left-color: var(--bc-alarm);
+    background: color-mix(in srgb, var(--bc-alarm) 14%, transparent);
+    animation: alarm-glow 1.6s ease-in-out infinite;
+  }
+  .pressure-card.alarm .tile-label { color: var(--bc-alarm); }
+  .pressure-card.alarm .tile-label ha-icon {
+    --mdc-icon-size: 13px;
+    margin-right: 3px;
+    vertical-align: -2px;
+  }
+  .pressure-card.alarm .pressure-value { color: var(--bc-alarm) !important; }
+  @keyframes alarm-glow {
+    0%, 100% { box-shadow: 0 0 0 0 transparent; }
+    50% { box-shadow: 0 0 10px 0 color-mix(in srgb, var(--bc-alarm) 45%, transparent); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .flow-row > .pressure-card.alarm,
+    .status-badge.offline,
+    .unit-icons .flame.burning { animation: none; }
   }
 
   .flow-row > .tile-wide {
@@ -682,6 +739,12 @@ export const styles = css`
     }
   }
 
-  ha-icon.clickable { cursor: pointer; }
-  .unit.clickable { cursor: pointer; }
+  .clickable { cursor: pointer; }
+  .clickable:focus-visible,
+  .badge:focus-visible,
+  .step-btn:focus-visible,
+  .slider:focus-visible {
+    outline: 2px solid var(--bc-accent);
+    outline-offset: 2px;
+  }
 `;

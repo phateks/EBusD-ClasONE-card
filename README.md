@@ -27,13 +27,15 @@ create boiler entities. Those parts must be set up and verified first.
 ## What the card displays
 
 - Boiler status, CH and thermoregulation switches
+- `EBUS OFFLINE` indicator in the status badge when ebusd or the eBUS link is down
+- Red pressure tile when pressure is outside a configurable range
 - Flame power and flow/return temperatures
 - Optional outdoor temperature and boiler pressure
 - Thermoregulation offset and, when configured, its computed flow setpoint
 - DHW and CH setpoint controls
 
-All card entities can be selected in the visual editor or set in YAML. The four
-temperature/pressure tile labels can also be customized. Values and controls depend on
+All card entities can be selected in the visual editor or set in YAML. All visible
+labels can be customized. Values and controls depend on
 the entities exposed by the user's ebusd/MQTT setup.
 
 ## Install the card
@@ -77,9 +79,36 @@ outdoor_temp_label: EXT
 pressure_label: PRESSURE
 ```
 
+### Optional settings
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `connection_entity` | none | Entity that is `on` while ebusd has an eBUS signal. When it is off or unavailable, the status badge shows `EBUS OFFLINE`. |
+| `pressure_min` / `pressure_max` | `1.0` / `2.5` | The pressure tile turns red outside this range (bar). |
+| `offset_min` / `offset_max` / `offset_step` | entity attributes, else `-14` / `14` / `2` | Offset slider range. |
+| `dhw_min` / `dhw_max` / `dhw_step` | entity attributes, else `36` / `60` / `1` | DHW setpoint range. |
+| `ch_min` / `ch_max` / `ch_step` | entity attributes, else `30` / `80` / `1` | CH setpoint range. |
+| `ch_switch_label`, `thermoreg_label`, `flame_label`, `offset_label`, `dhw_setpoint_label`, `ch_setpoint_label` | `CH`, `TERMOREGLARE`, `FLAME`, `OFFSET TERMOREGLARE`, `DHW SETPOINT`, `CH SETPOINT` | Label overrides. |
+
+Without `connection_entity`, the card shows `EBUS OFFLINE` when the status sensor
+becomes unavailable or unknown. ebusd publishes its signal state on the MQTT topic
+`ebusd/global/signal`. If no entity exists for it, an MQTT binary sensor can be added
+to `configuration.yaml`. Check the exact topic and payloads in MQTT Explorer first:
+
+```yaml
+mqtt:
+  binary_sensor:
+    - name: "ebusd signal"
+      unique_id: ebusd_global_signal
+      state_topic: "ebusd/global/signal"
+      payload_on: "true"
+      payload_off: "false"
+      device_class: connectivity
+```
+
 The sample IDs are not guaranteed to match your installation. In particular, check the
 entity domains for the two switches and writable setpoints before assigning them. See
-the [entity reference](docs/CLAS_ONE_ENTITIES.md) for the relationship between CSV
+the [entity reference](docs/CLASONE_ENTITIES.md) for the relationship between CSV
 messages and card fields.
 
 ## Project files
@@ -93,7 +122,7 @@ messages and card fields.
 
 The local CSV files are optional and are not a complete replacement for the standard
 ebusd configuration CDN. Review the [installation guide](docs/SETUP.md) and the
-[CSV-specific notes](docs/CLAS_ONE_ENTITIES.md) before using them. The provided files
+[CSV-specific notes](docs/CLASONE_ENTITIES.md) before using them. The provided files
 include write definitions and a message-ID discrepancy that must be checked against
 your boiler and ebusd logs.
 

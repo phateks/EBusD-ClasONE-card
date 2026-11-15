@@ -7,13 +7,17 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
 
   // Status
   status_entity?: string; // sensor.ebusd_boiler_boiler_status
+  connection_entity?: string; // binary_sensor for the eBUS signal (on = connected)
 
   // Header toggles
   ch_switch_entity?: string; // switch.ebusd_boiler_heating_status (CH)
-  thermoreg_entity?: string; // switch.heating_ebusd_boiler_thermoregulation_switch
+  thermoreg_entity?: string; // switch.ebusd_boiler_thermoregulation_switch
+  ch_switch_label?: string;
+  thermoreg_label?: string;
 
   // Flow unit
   flame_power_entity?: string; // sensor.ebusd_boiler_flame_power_kw
+  flame_label?: string;
   flow_temp_entity?: string; // TUR  (sensor.ebusd_boiler_lwt_temp)
   return_temp_entity?: string; // RETUR (sensor.ebusd_boiler_ewt_temp)
   outdoor_temp_entity?: string; // Outdoor temperature sensor
@@ -23,32 +27,57 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   pressure_label?: string;
 
   // Offset / thermoregulation
-  offset_entity?: string; // number.ariston_heating_flow_offset_1
+  offset_entity?: string; // number.ebusd_boiler_z1_heat_offset_set
+  offset_label?: string;
   offset_min?: number; // -14
   offset_max?: number; // 14
   offset_step?: number; // 2
-  computed_setpoint_entity?: string; // sensor.ebusd_boiler_ch_flow_setpoint (38)
+  computed_setpoint_entity?: string; // sensor.ebusd_boiler_ch_flow_setpoint
 
   // Setpoints row
   dhw_setpoint_entity?: string; // number.ebusd_boiler_dhw_comfort_temp_set
   dhw_setpoint_display_entity?: string; // sensor.ebusd_boiler_dhw_current_target_temp
+  dhw_setpoint_label?: string;
   dhw_min?: number; // 36
   dhw_max?: number; // 60
   dhw_step?: number; // 1
 
   ch_setpoint_entity?: string; // number.ebusd_boiler_z1_heat_setpoint_set
   ch_setpoint_display_entity?: string; // same number or sensor
+  ch_setpoint_label?: string;
   ch_min?: number; // 30
   ch_max?: number; // 80
   ch_step?: number; // 1
 
+  // Pressure
   pressure_entity?: string; // sensor.ebusd_boiler_boiler_pressure
+  pressure_min?: number; // below this the pressure tile turns red (default 1.0)
+  pressure_max?: number; // above this the pressure tile turns red (default 2.5)
 }
 
 export const CARD_VERSION = "0.1.0";
 
+export const DEFAULTS = {
+  title: "ARISTON CLAS ONE",
+  ch_switch_label: "CH",
+  thermoreg_label: "TERMOREGLARE",
+  flame_label: "FLAME",
+  flow_temp_label: "TUR",
+  return_temp_label: "RETUR",
+  outdoor_temp_label: "EXT",
+  pressure_label: "PRESIUNE",
+  offset_label: "OFFSET TERMOREGLARE",
+  dhw_setpoint_label: "DHW SETPOINT",
+  ch_setpoint_label: "CH SETPOINT",
+  offset: { min: -14, max: 14, step: 2 },
+  dhw: { min: 36, max: 60, step: 1 },
+  ch: { min: 30, max: 80, step: 1 },
+  pressure_min: 1.0,
+  pressure_max: 2.5,
+} as const;
+
 // Status mapping: raw ebusd boiler_status -> label + color key
-export type StatusKind = "idle" | "ch" | "dhw" | "other";
+export type StatusKind = "idle" | "ch" | "dhw" | "other" | "offline";
 
 export function mapStatus(raw: string | undefined): { label: string; kind: StatusKind } {
   if (!raw) return { label: "—", kind: "other" };
