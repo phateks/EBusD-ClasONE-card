@@ -5,6 +5,63 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-11-15
+
+### Added
+
+- `EBUS OFFLINE` indicator in the status badge when the status sensor is
+  unavailable/unknown or the optional `connection_entity` (eBUS signal) is
+  off/unavailable; controls are disabled while offline. The badge opens the
+  more-info dialog of the relevant entity.
+- Pressure alarm: the pressure tile turns red outside a configurable range
+  (`pressure_min` / `pressure_max`, default 1.0–2.5 bar).
+- Label overrides for every visible text: `ch_switch_label`, `thermoreg_label`,
+  `flame_label`, `offset_label`, `dhw_setpoint_label`, `ch_setpoint_label`.
+- Light theme support (colours follow the Home Assistant theme when dark mode
+  is off).
+- Sizing hint for the Sections dashboard layout (`getGridOptions`).
+- Keyboard and screen-reader support: focusable tiles, toggles and badge, ARIA
+  roles/labels, visible focus outline; animations respect
+  `prefers-reduced-motion`.
+- Optimistic, dimmed display of setpoint/offset values until the boiler
+  confirms them (reverts after ~15 s if not confirmed).
+- Support for `input_boolean` toggles in the editor.
+- Documentation: end-to-end setup guide (ebusd, MQTT, local CSV files),
+  Clas One entity reference, troubleshooting guide, card preview image,
+  example ebusd CSV files, and an MQTT `binary_sensor` example for the eBUS
+  signal.
+
+### Changed
+
+- Min/max/step for the offset slider and setpoints now come from the card
+  config, then the entity's own `min`/`max`/`step` attributes, then the
+  built-in defaults (previously the built-in defaults always overrode the
+  entity attributes).
+- The +/− setpoint buttons are debounced (700 ms) and send a single value
+  after the last click; buttons are disabled at min/max.
+- The offset value updates live while the slider is dragged.
+- Toggles, setpoint buttons and the offset slider are disabled while their
+  entity is unavailable.
+- Visual editor reorganised into collapsible sections with helper texts;
+  clearing a field removes it from the config so defaults apply again.
+- The card re-renders only when one of its own entities or the theme changes.
+- Stub config uses the current ebusd entity IDs and includes outdoor
+  temperature and pressure.
+- Card size hint increased from 4 to 6.
+- Example ebusd CSV files moved from `docs/#for_Home_Assistant#/ebusd/` to
+  `docs/ebusd/`.
+- README rewritten around the full ebusd → MQTT → Home Assistant → card path.
+
+### Fixed
+
+- Setpoints using `input_number` entities now call `input_number.set_value`
+  instead of `number.set_value`.
+- Floating-point drift when stepping setpoints with decimal steps; values are
+  shown with the precision of the step.
+- The card no longer writes a setpoint derived from an unknown state.
+- Unavailable flame power shows `—` instead of `0.0 kW`.
+- Broken links to the entity reference in the README.
+
 ## [0.1.0] - 2026-09-27
 
 ### Added
@@ -46,4 +103,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inconsistent editor class naming between card and editor registrations.
 - Stale v1.0.0 bundle being served from a duplicate `dist/` copy.
 
+[0.2.0]: ../../compare/v0.1.0...v0.2.0
 [0.1.0]: ../../releases/tag/v0.1.0
