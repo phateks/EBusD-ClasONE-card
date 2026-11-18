@@ -83,7 +83,8 @@ jobs:
         run: |
           test -f RELEASE_NOTES.md
           git add package.json package-lock.json src/types.ts ebusd-clasone-card.js CHANGELOG.md
-          git commit -m "Release $TAG"
+          # Version/changelog may already be committed on main; then tag HEAD as is.
+          git diff --cached --quiet || git commit -m "Release $TAG"
           git tag -a "$TAG" -m "Release $TAG"
           git push origin HEAD
           git push origin "$TAG"
