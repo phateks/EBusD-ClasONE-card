@@ -62,7 +62,7 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   pressure_max?: number; // above this the pressure tile turns red (default 2.5)
 }
 
-export const CARD_VERSION = "0.3.0";
+export const CARD_VERSION = "0.3.1";
 
 export const DEFAULTS = {
   title: "ARISTON CLAS ONE",
