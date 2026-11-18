@@ -14,13 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   their total (DHW + CH); the unit is taken from the sensor. Without these
   entities the offset box keeps the full width.
 - `consumption_label` and `consumption_decimals` options.
+- Visual editor section for the consumption options.
 
 ### Changed
 
 - The thermoregulation offset uses − / + buttons instead of a slider. The value
   starts from the boiler's current offset and is written after a short
   debounce. Range and step default to -14…+14, step 2, and no longer come from
-  the entity's attributes.
+  the entity's attributes; set `offset_min` / `offset_max` / `offset_step` if
+  your boiler uses a different range. The buttons stay disabled until the
+  boiler reports a current offset value.
 
 ## [0.2.0] - 2026-11-15
 
