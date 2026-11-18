@@ -260,6 +260,14 @@ function t(t,e,i,s){var n,o=arguments.length,r=o<3?e:null===s?s=Object.getOwnPro
   .mid-row.single { grid-template-columns: minmax(0, 1fr); }
   .mid-row > .offset-box,
   .mid-row > .cons-box { min-width: 0; box-sizing: border-box; }
+  /* Title on the top line of both boxes; the offset stepper fills the rest. */
+  .mid-row > .offset-box,
+  .mid-row > .cons-box {
+    justify-content: flex-start;
+    padding: 8px 10px;
+  }
+  .mid-row .offset-title { line-height: 20px; min-height: 20px; }
+  .mid-row > .offset-box .sp-control { margin: auto; }
   .cons-box {
     background: var(--bc-box-bg);
     border: 1px solid var(--bc-border);
