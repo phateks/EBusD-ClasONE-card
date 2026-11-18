@@ -53,6 +53,11 @@ const SCHEMA = [
     entity("computed_setpoint_entity", ["sensor"]),
     grid([box("offset_min"), box("offset_max"), box("offset_step")]),
   ]),
+  section("Consum (opțional)", [
+    entity("dhw_consumption_entity", ["sensor"]),
+    entity("ch_consumption_entity", ["sensor"]),
+    grid([text("consumption_label"), box("consumption_decimals")]),
+  ]),
   section("Setpoint-uri DHW / CH", [
     entity("dhw_setpoint_entity", ["number", "input_number"]),
     entity("dhw_setpoint_display_entity", ["sensor", "number"]),
@@ -91,6 +96,10 @@ const LABELS: Record<string, string> = {
   offset_min: "Offset min",
   offset_max: "Offset max",
   offset_step: "Offset pas",
+  dhw_consumption_entity: "Consum DHW (sensor)",
+  ch_consumption_entity: "Consum CH (sensor)",
+  consumption_label: "Titlu casetă consum",
+  consumption_decimals: "Zecimale consum",
   dhw_setpoint_entity: "DHW setpoint (number, control)",
   dhw_setpoint_display_entity: "DHW setpoint (afișaj)",
   dhw_setpoint_label: "Titlu DHW",
@@ -108,7 +117,9 @@ const LABELS: Record<string, string> = {
 const HELPERS: Record<string, string> = {
   connection_entity:
     "Când e off/indisponibil, badge-ul de status arată EBUS OFFLINE. Fără ea, cardul se bazează doar pe senzorul de status.",
-  offset_min: "Gol = valoarea din entitate.",
+  offset_min: `Gol = implicit ${DEFAULTS.offset.min} / ${DEFAULTS.offset.max}, pas ${DEFAULTS.offset.step}.`,
+  dhw_consumption_entity:
+    "Dacă nu setezi niciun senzor de consum, caseta nu apare și offset-ul ocupă tot rândul. Totalul = DHW + CH.",
   dhw_min: "Gol = valoarea din entitate.",
   ch_min: "Gol = valoarea din entitate.",
 };

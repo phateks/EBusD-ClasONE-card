@@ -250,18 +250,55 @@ export const styles = css`
     line-height: 1;
     text-align: center;
   }
-  .slider {
-    width: 100%;
-    accent-color: var(--bc-green);
-    cursor: pointer;
+  .offset-box .sp-control { padding: 0 2px; max-width: 280px; margin: 0 auto; }
+
+  /* ---------- Offset + consumption row ---------- */
+  .mid-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    margin: 0 0 8px;
   }
-  .ticks {
+  .mid-row.single { grid-template-columns: minmax(0, 1fr); }
+  .mid-row > .offset-box,
+  .mid-row > .cons-box { min-width: 0; box-sizing: border-box; }
+  .cons-box {
+    background: var(--bc-box-bg);
+    border: 1px solid var(--bc-border);
+    border-radius: 14px;
+    padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+  .cons-row,
+  .cons-total {
     display: flex;
     justify-content: space-between;
-    font-size: 10px;
-    color: var(--bc-ticks);
-    padding: 0 2px;
+    align-items: baseline;
+    gap: 6px;
+    font-size: 13px;
   }
+  .cons-name {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--bc-sub);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .cons-name ha-icon { --mdc-icon-size: 15px; }
+  .cons-name.dhw { color: var(--bc-dhw); }
+  .cons-name.ch { color: var(--bc-ch); }
+  .cons-val { font-weight: 600; color: var(--bc-txt); white-space: nowrap; }
+  .cons-total {
+    border-top: 1px solid var(--bc-border);
+    padding-top: 5px;
+    margin-top: 2px;
+  }
+  .cons-total .cons-name { font-size: 11px; }
+  .cons-total-val { font-size: 19px; font-weight: 700; color: var(--bc-txt); white-space: nowrap; }
 
   /* ---------- Setpoints row ---------- */
   .setpoints {
@@ -733,17 +770,12 @@ export const styles = css`
     .offset-value {
       font-size: 20px;
     }
-
-    .offset-box .slider {
-      margin: 0;
-    }
   }
 
   .clickable { cursor: pointer; }
   .clickable:focus-visible,
   .badge:focus-visible,
-  .step-btn:focus-visible,
-  .slider:focus-visible {
+  .step-btn:focus-visible {
     outline: 2px solid var(--bc-accent);
     outline-offset: 2px;
   }

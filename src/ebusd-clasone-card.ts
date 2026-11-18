@@ -65,8 +65,6 @@ export class EbusdClasOneCard extends LitElement {
   @state() private config!: BoilerCardConfig;
   /** Optimistic values for writable numbers, keyed by entity id. */
   @state() private pending: Record<string, Pending> = {};
-  /** Value of the offset slider while it is being dragged. */
-  @state() private offsetDrag?: number;
 
   public static styles = styles;
 
@@ -132,6 +130,8 @@ export class EbusdClasOneCard extends LitElement {
       c.pressure_entity,
       c.offset_entity,
       c.computed_setpoint_entity,
+      c.dhw_consumption_entity,
+      c.ch_consumption_entity,
       c.dhw_setpoint_entity,
       c.dhw_setpoint_display_entity,
       c.ch_setpoint_entity,
@@ -286,7 +286,7 @@ export class EbusdClasOneCard extends LitElement {
     const offline = this.isOffline();
     return html`
       <ha-card>
-        ${this.renderHeader(offline)} ${this.renderFlowRow()} ${this.renderOffset(offline)}
+        ${this.renderHeader(offline)} ${this.renderFlowRow()} ${this.renderMiddle(offline)}
         ${this.renderSetpoints(offline)}
       </ha-card>
     `;
@@ -480,27 +480,45 @@ export class EbusdClasOneCard extends LitElement {
     `;
   }
 
+  private renderMiddle(offline: boolean): TemplateResult | typeof nothing {
+    const c = this.config;
+    const hasConsumption = !!(c.dhw_consumption_entity || c.ch_consumption_entity);
+    const offset = this.renderOffset(offline);
+    if (!hasConsumption) return offset;
+    return html`
+      <div class="mid-row ${offset === nothing ? "single" : ""}">
+        ${offset} ${this.renderConsumption()}
+      </div>
+    `;
+  }
+
   private renderOffset(offline: boolean): TemplateResult | typeof nothing {
     const c = this.config;
     if (!c.offset_entity) return nothing;
     const id = c.offset_entity;
     const trOn = this.isOn(c.thermoreg_entity);
-    const disabled = offline || !trOn || !this.available(id);
-    const { min, max, step } = this.limits(
-      id,
-      c.offset_min,
-      c.offset_max,
-      c.offset_step,
-      DEFAULTS.offset
-    );
-    const offset = this.offsetDrag ?? this.pending[id]?.value ?? this.num(id);
+    // Limits come from the card config or the built-in defaults (-14..+14,
+    // step 2); the entity's own min/max/step are not used here.
+    const min = c.offset_min ?? DEFAULTS.offset.min;
+    const max = c.offset_max ?? DEFAULTS.offset.max;
+    const step = c.offset_step || DEFAULTS.offset.step;
+    const pending = this.pending[id];
+    // Start from the value the boiler reports; never write from an unknown state.
+    const current = this.num(id);
+    const shown = pending?.value ?? current;
+    const disabled = offline || !trOn || !this.available(id) || current === undefined;
+    const digits = this.decimals(step);
     const offsetStr =
-      offset === undefined
-        ? "--"
-        : `${offset > 0 ? "+" : ""}${offset.toFixed(this.decimals(step))}`;
+      shown === undefined ? "--" : `${shown > 0 ? "+" : ""}${shown.toFixed(digits)}`;
     const computed = trOn ? this.num(c.computed_setpoint_entity) : undefined;
-    const busy = this.offsetDrag !== undefined || !!this.pending[id];
     const label = c.offset_label ?? DEFAULTS.offset_label;
+    const change = (delta: number) => {
+      if (disabled || shown === undefined) return;
+      const raw = Math.min(max, Math.max(min, shown + delta));
+      const next = parseFloat(raw.toFixed(digits));
+      if (next === shown) return;
+      this.queueNumber(id, next, SETPOINT_DEBOUNCE_MS);
+    };
 
     return html`
       <div class="offset-box ${disabled ? "disabled" : ""}">
@@ -509,27 +527,62 @@ export class EbusdClasOneCard extends LitElement {
             ? html` <span class="sp">| ${computed.toFixed(0)}°</span>`
             : nothing}
         </div>
-        <div class="offset-value ${busy ? "pending" : ""}">${offsetStr}</div>
-        <input
-          class="slider"
-          type="range"
-          aria-label=${label}
-          min=${min}
-          max=${max}
-          step=${step}
-          .value=${String(offset ?? 0)}
-          ?disabled=${disabled}
-          @input=${(e: Event) => {
-            this.offsetDrag = parseFloat((e.target as HTMLInputElement).value);
-          }}
-          @change=${(e: Event) => {
-            const v = parseFloat((e.target as HTMLInputElement).value);
-            this.offsetDrag = undefined;
-            this.queueNumber(id, v, 0);
-          }}
-        />
-        <div class="ticks">
-          <span>${min}</span><span>0</span><span>${max}</span>
+        <div class="sp-control">
+          <button
+            class="step-btn"
+            aria-label="${label} −"
+            ?disabled=${disabled || (shown !== undefined && shown <= min)}
+            @click=${() => change(-step)}
+          >
+            −
+          </button>
+          <span class="offset-value ${pending ? "pending" : ""}">${offsetStr}</span>
+          <button
+            class="step-btn"
+            aria-label="${label} +"
+            ?disabled=${disabled || (shown !== undefined && shown >= max)}
+            @click=${() => change(step)}
+          >
+            +
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderConsumption(): TemplateResult {
+    const c = this.config;
+    const digits = c.consumption_decimals ?? DEFAULTS.consumption_decimals;
+    const unitOf = (id?: string) =>
+      (this.st(id)?.attributes?.unit_of_measurement as string | undefined) ?? "kW";
+    const unit = unitOf(c.dhw_consumption_entity ?? c.ch_consumption_entity);
+    const dhw = this.num(c.dhw_consumption_entity);
+    const ch = this.num(c.ch_consumption_entity);
+    const total = dhw === undefined && ch === undefined ? undefined : (dhw ?? 0) + (ch ?? 0);
+    const fmt = (v: number | undefined) => this.fmt(v, digits, ` ${unit}`);
+    const row = (icon: string, cls: string, name: string, id: string | undefined, v?: number) =>
+      id
+        ? html`
+            <div
+              class="cons-row clickable"
+              role="button"
+              tabindex="0"
+              @click=${() => this.moreInfo(id)}
+              @keydown=${this.onKey(() => this.moreInfo(id))}
+            >
+              <span class="cons-name ${cls}"><ha-icon icon=${icon}></ha-icon>${name}</span>
+              <span class="cons-val">${fmt(v)}</span>
+            </div>
+          `
+        : nothing;
+    return html`
+      <div class="cons-box">
+        <div class="offset-title">${c.consumption_label ?? DEFAULTS.consumption_label}</div>
+        ${row("mdi:shower-head", "dhw", "DHW", c.dhw_consumption_entity, dhw)}
+        ${row("mdi:radiator", "ch", "CH", c.ch_consumption_entity, ch)}
+        <div class="cons-total">
+          <span class="cons-name">TOTAL</span>
+          <span class="cons-total-val">${fmt(total)}</span>
         </div>
       </div>
     `;
