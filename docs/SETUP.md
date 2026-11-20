@@ -214,11 +214,17 @@ computed_setpoint_entity: sensor.ebusd_boiler_ch_flow_setpoint
 dhw_setpoint_entity: number.ebusd_boiler_dhw_comfort_temp_set
 dhw_setpoint_display_entity: sensor.ebusd_boiler_dhw_current_target_temp
 ch_setpoint_entity: number.ebusd_boiler_z1_heat_setpoint_set
+dhw_consumption_entity: sensor.gaz_acm_zilnic
+ch_consumption_entity: sensor.gaz_incalzire_zilnic
 ```
 
-The card's offset/DHW/CH min, max and step options control its slider/buttons; make
+The card's offset/DHW/CH min, max and step options control its − / + buttons; make
 them match the actual number entity's limits and the boiler's supported settings.
 While thermoregulation is on, the card disables the manual CH setpoint buttons.
+
+The consumption entities are optional. They are usually daily `utility_meter`
+sensors built on the `gas_energy_ch` / `gas_energy_dhw` counters; see
+[Gas consumption](../README.md#gas-consumption).
 
 For the meaning and origin of each message/entity, see the
 [Clas One reference](CLASONE_ENTITIES.md). For failures, see

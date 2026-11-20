@@ -31,7 +31,8 @@ create boiler entities. Those parts must be set up and verified first.
 - Red pressure tile when pressure is outside a configurable range
 - Flame power and flow/return temperatures
 - Optional outdoor temperature and boiler pressure
-- Thermoregulation offset and, when configured, its computed flow setpoint
+- Thermoregulation offset with − / + buttons and, when configured, its computed flow setpoint
+- Optional gas consumption box: DHW, CH and their total (see [Gas consumption](#gas-consumption))
 - DHW and CH setpoint controls
 
 All card entities can be selected in the visual editor or set in YAML. All visible
@@ -73,6 +74,8 @@ computed_setpoint_entity: sensor.ebusd_boiler_ch_flow_setpoint
 dhw_setpoint_entity: number.ebusd_boiler_dhw_comfort_temp_set
 dhw_setpoint_display_entity: sensor.ebusd_boiler_dhw_current_target_temp
 ch_setpoint_entity: number.ebusd_boiler_z1_heat_setpoint_set
+dhw_consumption_entity: sensor.gaz_acm_zilnic
+ch_consumption_entity: sensor.gaz_incalzire_zilnic
 flow_temp_label: TUR
 return_temp_label: RETUR
 outdoor_temp_label: EXT
@@ -112,6 +115,36 @@ The sample IDs are not guaranteed to match your installation. In particular, che
 entity domains for the two switches and writable setpoints before assigning them. See
 the [entity reference](docs/CLASONE_ENTITIES.md) for the relationship between CSV
 messages and card fields.
+
+## Gas consumption
+
+The Clas One keeps two cumulative gas-energy counters, one for CH and one for DHW.
+The included [`clas_one.csv`](docs/ebusd/ariston/clas_one.csv) reads them as
+`gas_energy_ch` and `gas_energy_dhw` (kWh). The boiler updates them about every two
+hours, so the values move in steps rather than continuously.
+
+To show today's consumption on the card, add daily utility meters on top of the
+counters in `configuration.yaml`. Use the entity IDs that MQTT discovery created in
+your installation:
+
+```yaml
+utility_meter:
+  gaz_incalzire_zilnic:
+    unique_id: gaz_incalzire_zilnic
+    name: "Gaz încălzire azi"
+    source: sensor.ebusd_boiler_gas_energy_ch
+    cycle: daily
+  gaz_acm_zilnic:
+    unique_id: gaz_acm_zilnic
+    name: "Gaz ACM azi"
+    source: sensor.ebusd_boiler_gas_energy_dhw
+    cycle: daily
+```
+
+Then select the two utility meters as `ch_consumption_entity` and
+`dhw_consumption_entity`. The card adds them up for the TOTAL row. You can also point
+the card at the raw counters or at any other energy sensor; the unit is taken from
+the sensor.
 
 ## Project files
 

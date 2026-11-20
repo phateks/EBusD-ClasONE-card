@@ -28,7 +28,7 @@ r1,boiler,flame_power_kw,Flame Power,,3c,2000,6847,,s,IGN:1,,,,,,UIN,10,kW
 ############################################################################################
 
 r,boiler,flame_active,Flame Active,,3c,2000,0e11,ign,s,IGN:1,,,,,s,onoff
-r1,boiler,diverter_valve,Diverter Valve,,3c,2000,c012,ign,s,IGN:1,,,,,,BCD,0=dhw;1=heating
+r,boiler,diverter_valve,Diverter Valve,,3c,2000,c012,ign,s,IGN:1,,,,,,BCD,0=dhw;1=heating
 b,boiler,boiler_status,Boiler Status,,fe,2010,c04b,boilerstatus,,UCH,1=standby;2=heating;3=heating hot water;4=water tank;5=circulating;23=manual test;24=comfort;31=gas_circuit_deaeration;36=auto_calibration;51=low_water_pressure;52=no_flame
 r,boiler,boiler_status,Boiler Status,,3c,2000,c04b,ign,s,IGN:1,,,,boilerstatus,s,UCH,1=standby;2=heating;3=heating hot water;4=water tank;5=circulating;23=manual test;24=comfort;31=gas_circuit_deaeration;36=auto_calibration;51=low_water_pressure;52=no_flame
 r,boiler,last_error,Last Error,,3c,2002,0400,,s,error_code,,,7 first bits of byte,zone,s,BI0:7,,,,,s,IGN:2,,,Date: YY/MM/DD,year,s,UCH,,,,month,s,UCH,,,,day,s,UCH,,,,time,s,HTM,,
@@ -37,30 +37,29 @@ r,boiler,last_error,Last Error,,3c,2002,0400,,s,error_code,,,7 first bits of byt
 ####                             BOILER - COUNTERS                                      ####
 ############################################################################################
 
-r1,boiler,hours_burner_on_CH,CH Burner Hours,,3c,2000,4bd1,ign,s,IGN:1,,,,,,UIN,,hours
-r1,boiler,hours_burner_on_DHW,DHW Burner Hours,,3c,2000,4cd1,ign,s,IGN:1,,,,,,UIN,,hours
+r,boiler,hours_burner_on_CH,CH Burner Hours,,3c,2000,4bd1,ign,s,IGN:1,,,,,,UIN,,hours
+r,boiler,hours_burner_on_DHW,DHW Burner Hours,,3c,2000,4cd1,ign,s,IGN:1,,,,,,UIN,,hours
 r,boiler,hours_pump_on,Pump Hours,,3c,2000,42d2,ign,s,IGN:1,,,,,,UIN,,hours
 r,boiler,ignition_cycles,Ignition Cycles,,3c,2000,42d8,ign,s,IGN:1,,,,,,UIN
 r,boiler,diverter_cycles,Diverter Cycles,,3c,2000,40d2,ign,s,IGN:1,,,,,,UIN
 r,boiler,flame_lift_offs,Flame Lift Offs,,3c,2000,46d1,ign,s,IGN:1,,,,,,UIN
 r,boiler,boiler_circulation_cycles,Circulation Cycles,,3c,2000,44d2,ign,s,IGN:1,,,,,,UIN
-r1,boiler,boiler_fan_cycles,Fan Cycles,,3c,2000,4CD2,ign,s,IGN:1,,,,,,UIN
+r,boiler,boiler_fan_cycles,Fan Cycles,,3c,2000,4CD2,ign,s,IGN:1,,,,,,UIN
 r,boiler,boiler_life_time,Boiler Life Time,,3c,2000,50d9,ign,s,IGN:1,,,,,,UIN,,min
 
 ############################################################################################
 ####                             BOILER - SETTINGS (read-only)                          ####
 ############################################################################################
 
-r1,boiler,nominal_power,Nominal Power,,3c,2000,6829,ign,s,IGN:1,,,,,s,UCH,,kW
+r,boiler,nominal_power,Nominal Power,,3c,2000,6829,ign,s,IGN:1,,,,,s,UCH,,kW
 r,boiler,boiler_type,Boiler Type,,3c,2000,c428,ign,s,IGN:1,,,,,s,UCH,0=mixed_instant;1=ext_tank_ntc;2=ext_tank_thermostat;3=micro_storage;4=stratification_storage;6=storage
-r1,boiler,pump_operation,Pump Operation,,3c,2000,c228,ign,s,IGN:1,,,,,s,UCH,0=low_speed;1=high_speed;2=modulating
+r,boiler,pump_operation,Pump Operation,,3c,2000,c228,ign,s,IGN:1,,,,,s,UCH,0=low_speed;1=high_speed;2=modulating
 r,boiler,pump_current_modulation,Pump Modulation,,3c,2000,c300,ign,s,IGN:1,,,,,,UCH,,pct
-r1,boiler,boiler_current_modulation,Boiler Gas Modulation,,3c,2000,c404,ign,s,IGN:1,,,,,,UCH
 r,boiler,heat_max_power_pct,Max Heating Power,,3c,2000,6329,ign,s,IGN:1,,,,,s,UIN,,pct
 r,boiler,heat_min_power_pct,Min Heating Power,,3c,2000,6429,ign,s,IGN:1,,,,,s,UIN,,pct
 r,boiler,dhw_max_power_pct,Max DHW Power,,3c,2000,6229,ign,s,IGN:1,,,,,s,UIN,,pct
-r1,boiler,warning_pressure,Warning Pressure,,3c,2000,c12a,ign,s,IGN:1,,,,,s,UCH,10,bar
-r1,boiler,heat_post_circulation,Post Circulation,,3c,2000,c227,ign,s,IGN:1,,,,,s,UCH,,min
+r,boiler,warning_pressure,Warning Pressure,,3c,2000,c12a,ign,s,IGN:1,,,,,s,UCH,10,bar
+r,boiler,heat_post_circulation,Post Circulation,,3c,2000,c227,ign,s,IGN:1,,,,,s,UCH,,min
 r,boiler,fan_speed,Fan Speed,,3c,2000,4013,,s,IGN:1,,,,,,UIN,,rpm
 
 ############################################################################################
@@ -171,3 +170,7 @@ b,boiler,z1_heat_offset,Z1 Heat Offset,37,fe,200e,6471,,,SIN,10
 
 # === TEST READ ACTIV DHW (temporar) ===
 # (removed invalid test_dhw_comfort line)
+
+# === Contoare gaz (cumulat, actualizat de centrala la 2h; unitate 10 kJ -> /360 = kWh) ===
+r9,boiler,gas_energy_ch,Gas Energy CH total,,3c,2000,46da47da,ign,s,IGN:1,,,,,,ULG,360,kWh
+r9,boiler,gas_energy_dhw,Gas Energy DHW total,,3c,2000,48da49da,ign,s,IGN:1,,,,,,ULG,360,kWh
