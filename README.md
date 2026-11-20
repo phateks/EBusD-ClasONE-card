@@ -3,6 +3,8 @@
 A Home Assistant Lovelace card and companion setup documentation for monitoring and
 controlling an **Ariston Clas One** through **ebusd** and MQTT.
 
+<p align="center"><img src="docs/preview.png" alt="EBusD Clas One Card" width="420"></p>
+
 This repository covers the complete path from the eBUS interface to the dashboard:
 
 ```text
