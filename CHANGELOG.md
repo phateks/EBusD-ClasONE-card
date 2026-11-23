@@ -5,6 +5,45 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-11-23
+
+### Added
+
+- Flame power ring gauge on the flame tile (270° arc). Its full scale is set
+  with the new `flame_max` option (kW, default 24).
+- Animated "electric" outline around the flame tile while the boiler is asking
+  for heat (CH/DHW status or a lit burner). Turn it off with
+  `electric_border: false`. The animation stops when the system asks for reduced
+  motion (`prefers-reduced-motion`).
+- Pressure scale under the pressure value. A band marks the normal range
+  (`pressure_min` … `pressure_max`) and a marker shows the current pressure.
+- Thin bars under the offset, setpoint and consumption boxes: the offset bar is
+  filled from 0, the setpoint bar shows the value within its min…max range and
+  the consumption bar shows the DHW / CH split.
+- `AUTO` chip on the CH setpoint while thermoregulation drives it, and an `OFF`
+  chip on the offset box while thermoregulation is off.
+- Icons on the flow, return, outdoor and pressure tiles.
+- Visual editor fields for `flame_max` and `electric_border`.
+- Gas energy counters `gas_energy_ch` / `gas_energy_dhw` (kWh) in the bundled
+  ebusd CSV (`docs/ebusd/ariston/clas_one.csv`).
+- README section on gas consumption, with a daily `utility_meter` example.
+
+### Changed
+
+- Redesigned card layout. The card takes its accent colour from the boiler
+  status. The thermoregulation and CH buttons are toggle switches, the status
+  badge has a pulsing dot during heating/DHW, and −/+ buttons use icons.
+- The offset, consumption, DHW setpoint and CH setpoint boxes now share one
+  grid: two columns on narrow cards, one row on wide cards.
+- The layout now adapts to the card's own width (container queries) instead of
+  the screen width, so it also fits narrow columns on wide screens.
+- The consumption total moved into the consumption box header.
+- Bundled ebusd CSV: burner hours, fan cycles and several read-only settings are
+  no longer polled periodically (`r1` → `r`); `boiler_current_modulation` was
+  removed from it.
+- Updated the entity reference, setup and troubleshooting docs for the
+  consumption box and offset buttons, and the preview screenshot.
+
 ## [0.3.1] - 2026-11-18
 
 ### Fixed
@@ -131,6 +170,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inconsistent editor class naming between card and editor registrations.
 - Stale v1.0.0 bundle being served from a duplicate `dist/` copy.
 
+[1.0.0]: ../../compare/v0.3.1...v1.0.0
 [0.3.1]: ../../compare/v0.3.0...v0.3.1
 [0.3.0]: ../../compare/v0.2.0...v0.3.0
 [0.2.0]: ../../compare/v0.1.0...v0.2.0
