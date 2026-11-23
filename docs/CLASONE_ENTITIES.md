@@ -27,12 +27,14 @@ weather integration rather than ebusd.
 | `return_temp_entity` | `EWT_temp` | CH return temperature (RETUR), in °C. |
 | `outdoor_temp_entity` | `ext_temp` in the provided profile, or another HA sensor | Optional outdoor temperature. The card displays one decimal and `°C`. The current CSV's active message ID conflicts with its comments; verify it before relying on it. |
 | `pressure_entity` | `boiler_pressure` | Boiler/system pressure in bar. |
-| `offset_entity` | `z1_heat_offset_set` write control and the corresponding offset read/broadcast definition | Thermoregulation offset control. Select the actual writable number entity. Slider min/max/step should agree with the entity and boiler configuration. |
+| `offset_entity` | `z1_heat_offset_set` write control and the corresponding offset read/broadcast definition | Thermoregulation offset control with − / + buttons. The card starts from the entity's current value and uses `offset_min`/`offset_max`/`offset_step` (default -14/+14/2). Select the actual writable number entity. |
 | `computed_setpoint_entity` | `ch_flow_setpoint` | Computed CH flow target in °C; shown beside the OFFSET title while thermoregulation is on. |
 | `dhw_setpoint_entity` | `dhw_comfort_temp_set` | Writable DHW comfort target. The card's +/- controls call `number.set_value`. |
 | `dhw_setpoint_display_entity` | `dhw_current_target_temp` or another sensor/number | Optional display fallback if the writable DHW entity has no numeric state. |
 | `ch_setpoint_entity` | `z1_heat_setpoint_set` | Writable CH zone 1 target. The card disables +/- while thermoregulation is on. |
 | `ch_setpoint_display_entity` | Optional sensor/number | Optional display fallback for the CH control. |
+| `ch_consumption_entity` | `gas_energy_ch`, usually through a daily `utility_meter` | Optional. CH gas consumption in the consumption box. |
+| `dhw_consumption_entity` | `gas_energy_dhw`, usually through a daily `utility_meter` | Optional. DHW gas consumption in the consumption box. The TOTAL row is CH + DHW. |
 
 Tile names can be customized independently with `flow_temp_label`,
 `return_temp_label`, `outdoor_temp_label` and `pressure_label`. Defaults are `TUR`,
@@ -95,13 +97,29 @@ MQTT discovery rather than inferred from an entity ID.
 These definitions can issue commands to the boiler. Confirm that the setpoint ranges
 and entity services match your installation before exposing them to users or automations.
 
+### Gas energy counters
+
+| CSV message | Defined value | Purpose |
+|---|---|---|
+| `gas_energy_ch` | Cumulative CH gas energy (`46da47da`, `ULG`, divider 360, kWh) | Source for CH consumption |
+| `gas_energy_dhw` | Cumulative DHW gas energy (`48da49da`, `ULG`, divider 360, kWh) | Source for DHW consumption |
+
+The boiler stores these counters in units of 10 kJ, so dividing by 360 gives kWh. It
+refreshes them about every two hours; the rows are polled with low priority (`r9`).
+The counters only increase. For daily values, put a Home Assistant `utility_meter`
+with `cycle: daily` on top of each one (see the main README).
+
 ### Counters and diagnostics
 
 The CSV also defines burner CH/DHW hours, pump hours, ignition and diverter cycles,
 flame lift-offs, circulation/fan cycles, boiler lifetime, nominal power, boiler type,
-pump operation/modulation, gas modulation, maximum/minimum power percentages, warning
+pump operation/modulation, maximum/minimum power percentages, warning
 pressure, post-circulation time, maintenance months, maintenance warning enablement,
 and boiler software version.
+
+Slow-changing values such as burner hours, cycles, nominal power and pump settings
+are defined without polling (`r` instead of `r1`). That keeps the poll queue short
+so `flame_power_kw` is refreshed often. These values are read when requested.
 
 These are additional ebusd messages; they are not automatically displayed by this card.
 Their availability depends on whether the boiler responds to the requests and whether

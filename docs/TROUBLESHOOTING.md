@@ -70,7 +70,7 @@ before changing the config source.
 - The +/− buttons wait briefly after the last click and then send one value. The
   number is shown dimmed until the boiler reports it back. If it reverts after about
   15 seconds, the write was not confirmed by ebusd.
-- Setpoint buttons and the offset slider are disabled while their entity is
+- Setpoint and offset buttons are disabled while their entity is
   unavailable, so the card never writes a value based on an unknown state.
 - The CH setpoint control is intentionally disabled while thermoregulation is on.
 - `EBUS OFFLINE` in the status badge means the status sensor is unavailable/unknown,
