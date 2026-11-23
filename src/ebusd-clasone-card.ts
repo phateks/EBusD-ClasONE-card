@@ -399,7 +399,6 @@ export class EbusdClasOneCard extends LitElement {
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
           </filter>
         </defs>
-        <rect class="eb-halo" width="100%" height="100%" rx="13"></rect>
         <rect class="eb-arc" width="100%" height="100%" rx="13" filter="url(#${id})"></rect>
         <rect class="eb-core" width="100%" height="100%" rx="13" filter="url(#${id})"></rect>
       </svg>

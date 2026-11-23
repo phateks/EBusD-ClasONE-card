@@ -290,14 +290,6 @@ function t(t,e,i,s){var n,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPro
     gap: 0;
   }
   .unit-text { display: flex; flex-direction: column; align-items: center; }
-  .unit.burning {
-    background: radial-gradient(
-        90% 70% at 50% 35%,
-        color-mix(in srgb, var(--bc-ch) 16%, transparent),
-        transparent 75%
-      ),
-      var(--bc-surface);
-  }
   .ring {
     position: relative;
     width: 66px;
@@ -313,13 +305,11 @@ function t(t,e,i,s){var n,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPro
   .ring-fg {
     stroke: var(--bc-ch);
     transition: stroke-dasharray 0.8s ease;
-    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--bc-ch) 60%, transparent));
   }
   .ring .flame { --mdc-icon-size: 25px; color: var(--bc-muted); transition: color 0.3s; }
   .unit.burning .flame {
     color: var(--bc-ch);
     animation: flicker 1.2s ease-in-out infinite;
-    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--bc-ch) 70%, transparent));
   }
   @keyframes flicker {
     0%, 100% { transform: scale(1) rotate(0); }
@@ -342,10 +332,6 @@ function t(t,e,i,s){var n,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPro
   }
 
   /* ----- Electric border (heat demand) ----- */
-  .unit.electric {
-    box-shadow: 0 0 14px -2px color-mix(in srgb, var(--bc-ch) 55%, transparent),
-      inset 0 0 18px -6px color-mix(in srgb, var(--bc-ch) 70%, transparent);
-  }
   svg.electric {
     position: absolute;
     top: 1px;
@@ -354,13 +340,10 @@ function t(t,e,i,s){var n,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPro
     height: calc(100% - 2px);
     overflow: visible;
     pointer-events: none;
-    filter: drop-shadow(0 0 2px var(--bc-ch)) drop-shadow(0 0 6px #ff6a1f);
   }
   svg.electric rect { fill: none; }
-  .eb-halo { stroke: var(--bc-ch); stroke-width: 5; opacity: 0.18; }
   .eb-arc { stroke: var(--bc-ch); stroke-width: 2.2; }
   .eb-core { stroke: #ffe6cf; stroke-width: 0.9; opacity: 0.9; }
-  :host([light]) svg.electric { filter: drop-shadow(0 0 2px var(--bc-ch)); }
   :host([light]) .eb-core { stroke: #fff4ea; }
 
   /* ----- Sensor tiles ----- */
@@ -392,6 +375,8 @@ function t(t,e,i,s){var n,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPro
   }
   .tile-label ha-icon { --mdc-icon-size: 15px; color: var(--tile); flex-shrink: 0; }
   .tile-value {
+    align-self: flex-end;
+    text-align: right;
     font-size: 23px;
     font-weight: 600;
     line-height: 1;
@@ -707,7 +692,6 @@ function t(t,e,i,s){var n,r=arguments.length,o=r<3?e:null===s?s=Object.getOwnPro
             <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
           </filter>
         </defs>
-        <rect class="eb-halo" width="100%" height="100%" rx="13"></rect>
         <rect class="eb-arc" width="100%" height="100%" rx="13" filter="url(#${t})"></rect>
         <rect class="eb-core" width="100%" height="100%" rx="13" filter="url(#${t})"></rect>
       </svg>
