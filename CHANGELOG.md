@@ -5,7 +5,6 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-<<<<<<< HEAD
 ## [Unreleased]
 
 ### Changed
@@ -14,9 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   heat demand the flame tile now shows only a soft, subdued glow. Turn it off
   with the new `flame_glow: false` option (`electric_border: false` from 1.0.0
   still works).
-- Flow, return, outdoor and pressure values are right-aligned under their
-  labels.
-=======
+
 ## [1.0.1] - 2026-11-23
 
 ### Changed
@@ -26,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and drop-shadow around the animated "electric" outline. The outline itself
   and the flame flicker animation are unchanged.
 - Values on the flow, return, outdoor and pressure tiles are now right-aligned.
->>>>>>> b96f05f4ac5403019cd0758bf592d23e7fcf21e0
 
 ## [1.0.0] - 2026-11-23
 
