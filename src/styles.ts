@@ -12,56 +12,86 @@ export const styles = css`
     --bc-green: #5dcaa5;
     --bc-txt: #e8eef6;
     --bc-sub: #8aa0bd;
-    /* Transparent inner boxes so the card respects the dashboard background /
-       any transparency applied via theme or card_mod. */
-    --bc-box-bg: transparent;
+    --bc-title: #dbe6f3;
+    --bc-muted: #3a4a60;
+    --bc-alarm: #ff5c5c;
+    /* Inner surfaces are translucent tints (not opaque fills) so the card still
+       follows the dashboard background / card_mod transparency. */
+    --bc-surface: color-mix(in srgb, #9fb6d6 6%, transparent);
+    --bc-surface-hi: color-mix(in srgb, #9fb6d6 10%, transparent);
+    --bc-line: color-mix(in srgb, #9fb6d6 14%, transparent);
     --bc-border: #26425f;
     --bc-radius: 18px;
-    --bc-title: #cbd9ea;
-    --bc-muted: #4a5a70;
-    --bc-ticks: #5a6f88;
-    --bc-flame-idle: #3a4a60;
-    --bc-btn-bg: #1d314f;
-    --bc-btn-hover: #25425f;
-    --bc-ch-on-bg: #3a2410;
-    --bc-tr-on-bg: #163a2a;
-    --bc-alarm: #ff5c5c;
+    --bc-tile-radius: 13px;
+    --bc-btn-bg: color-mix(in srgb, #9fb6d6 12%, transparent);
+    --bc-btn-hover: color-mix(in srgb, #9fb6d6 20%, transparent);
+    --bc-gap: 7px;
+    --st: #8aa0bd;
   }
 
-  /* Light HA theme: keep the accents, switch text/borders to theme colours. */
+  /* Light HA theme: keep the accents, switch text/surfaces to theme colours. */
   :host([light]) {
     --bc-txt: var(--primary-text-color, #1c2733);
     --bc-sub: var(--secondary-text-color, #5b6b7d);
     --bc-title: var(--primary-text-color, #1c2733);
-    --bc-border: var(--divider-color, #c9d5e2);
-    --bc-muted: #b4c0cd;
-    --bc-ticks: #7d8c9c;
-    --bc-flame-idle: #b4c0cd;
-    --bc-btn-bg: #e3ebf5;
-    --bc-btn-hover: #d3dfec;
-    --bc-ch-on-bg: #ffe9df;
-    --bc-tr-on-bg: #dcf5ec;
+    --bc-border: var(--divider-color, #d5dee8);
+    --bc-muted: #c3ced9;
     --bc-alarm: #d93838;
+    --bc-surface: color-mix(in srgb, #3c5a80 5%, transparent);
+    --bc-surface-hi: color-mix(in srgb, #3c5a80 8%, transparent);
+    --bc-line: color-mix(in srgb, #3c5a80 12%, transparent);
+    --bc-btn-bg: color-mix(in srgb, #3c5a80 9%, transparent);
+    --bc-btn-hover: color-mix(in srgb, #3c5a80 15%, transparent);
+    --bc-ch: #f0703c;
+    --bc-dhw: #1fa99f;
+    --bc-green: #2fa57e;
   }
 
   ha-card {
-    /* No hardcoded background: inherit the theme's default so transparency
-       (e.g. via card_mod or a transparent theme) can be applied if needed. */
     background: var(--ha-card-background, var(--card-background-color, none));
     border: 1px solid var(--bc-border);
     border-radius: var(--bc-radius);
-    box-shadow: 0 0 0 1px rgba(63, 208, 255, 0.06), 0 2px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.25);
     padding: 12px;
     color: var(--bc-txt);
     overflow: hidden;
+    position: relative;
+    font-variant-numeric: tabular-nums;
+  }
+  /* Soft status glow in the top-left corner (CH = orange, DHW = teal). */
+  ha-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(
+      120% 60% at 0% 0%,
+      color-mix(in srgb, var(--st) 12%, transparent),
+      transparent 60%
+    );
+    opacity: 0;
+    transition: opacity 0.6s;
+  }
+  ha-card.st-ch::before,
+  ha-card.st-dhw::before,
+  ha-card.st-offline::before { opacity: 1; }
+  ha-card > * { position: relative; }
+
+  .u {
+    font-size: 0.5em;
+    font-weight: 600;
+    color: var(--bc-sub);
+    margin-left: 2px;
+    letter-spacing: 0;
   }
 
   /* ---------- Header ---------- */
   .header {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
+    gap: 8px 12px;
+    margin-bottom: 10px;
   }
   .title-wrap {
     display: flex;
@@ -71,720 +101,559 @@ export const styles = css`
     min-width: 0;
   }
   .header-controls {
-    display: contents;
+    display: flex;
+    gap: var(--bc-gap);
   }
   .title-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
-    background: linear-gradient(145deg, #ff8a5c33, #ff8a5c11);
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--st) 16%, transparent);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transition: background 0.4s, box-shadow 0.4s;
   }
-  .title-icon ha-icon {
-    --mdc-icon-size: 18px;
-    color: var(--bc-ch);
-  }
+  .title-icon ha-icon { --mdc-icon-size: 20px; color: var(--st); transition: color 0.4s; }
+  .title-icon.active { box-shadow: 0 0 16px -4px var(--st); }
   .title-text {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1px;
+    font-size: 15px;
+    font-weight: 600;
     color: var(--bc-title);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    min-width: 0;
   }
   .status-badge {
-    font-size: 11px;
+    flex-shrink: 0;
+    font-size: 10.5px;
     font-weight: 700;
-    letter-spacing: 1px;
-    border-radius: 8px;
-    padding: 3px 10px;
+    letter-spacing: 0.8px;
+    color: var(--st);
+    background: color-mix(in srgb, var(--st) 12%, transparent);
+    border-radius: 999px;
+    padding: 3px 9px 3px 8px;
     white-space: nowrap;
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     cursor: pointer;
   }
-  .status-badge ha-icon { --mdc-icon-size: 14px; }
+  .status-badge ha-icon { --mdc-icon-size: 13px; }
+  .status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--st);
+  }
+  .status-dot.live { animation: ping 1.8s ease-out infinite; }
+  @keyframes ping {
+    0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--st) 60%, transparent); }
+    100% { box-shadow: 0 0 0 6px transparent; }
+  }
   .status-badge.offline { animation: pulse 1.6s ease-in-out infinite; }
   @keyframes pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.55; }
   }
+
+  /* Toggle pills with a mini switch */
   .badge {
+    --tg: var(--bc-sub);
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: var(--bc-box-bg);
-    border: 1px solid var(--bc-border);
-    border-radius: 10px;
-    padding: 6px 12px;
+    gap: 7px;
+    background: var(--bc-surface);
+    border: 1px solid transparent;
+    border-radius: 11px;
+    padding: 5px 8px 5px 10px;
     cursor: pointer;
-    flex: 0 0 auto;
     user-select: none;
+    transition: background 0.25s, border-color 0.25s;
+    min-width: 0;
   }
-  .badge ha-icon {
-    --mdc-icon-size: 15px;
+  .badge.ch { --tg-on: var(--bc-ch); }
+  .badge.tr { --tg-on: var(--bc-green); }
+  .badge.on {
+    --tg: var(--tg-on);
+    background: color-mix(in srgb, var(--tg-on) 14%, transparent);
+    border-color: color-mix(in srgb, var(--tg-on) 30%, transparent);
   }
+  .badge ha-icon { --mdc-icon-size: 16px; color: var(--tg); flex-shrink: 0; }
   .badge .lbl {
-    font-size: 10px;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-    color: var(--bc-sub);
+    flex: 1 1 auto;
+    font-size: 10.5px;
+    letter-spacing: 0.6px;
+    font-weight: 700;
+    color: var(--tg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
-  .badge ha-icon { color: var(--bc-sub); }
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
+  .track {
+    width: 26px;
+    height: 15px;
+    border-radius: 8px;
     background: var(--bc-muted);
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.25s;
   }
-  .badge.ch.on { background: var(--bc-ch-on-bg); border-color: #ff8a5c55; }
-  .badge.ch.on ha-icon,
-  .badge.ch.on .lbl { color: var(--bc-ch); }
-  .badge.ch.on .dot { background: var(--bc-ch); box-shadow: 0 0 8px var(--bc-ch); }
-  .badge.tr.on { background: var(--bc-tr-on-bg); border-color: #5dcaa555; }
-  .badge.tr.on .lbl { color: var(--bc-green); }
-  .badge.tr.on .dot { background: var(--bc-green); box-shadow: 0 0 8px var(--bc-green); }
+  .knob {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #fff;
+    transition: transform 0.25s;
+  }
+  .badge.on .track { background: var(--tg-on); }
+  .badge.on .knob { transform: translateX(11px); }
   .badge.unavailable { opacity: 0.45; cursor: not-allowed; }
 
+  /* ---------- Shared surfaces ---------- */
+  .unit,
+  .pipe,
+  .box {
+    background: var(--bc-surface);
+    border-radius: var(--bc-tile-radius);
+    box-sizing: border-box;
+    min-width: 0;
+    position: relative;
+    transition: background 0.2s, opacity 0.2s;
+  }
+  .clickable { cursor: pointer; }
+  .pipe.clickable:hover,
+  .unit.clickable:hover,
+  .cons-row.clickable:hover { background: var(--bc-surface-hi); }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    padding: 1px 7px;
+    border-radius: 999px;
+    background: var(--bc-btn-bg);
+    color: var(--bc-sub);
+    white-space: nowrap;
+    line-height: 18px;
+  }
+  .chip ha-icon { --mdc-icon-size: 13px; }
+  .chip.accent {
+    background: color-mix(in srgb, var(--bc-accent) 16%, transparent);
+    color: var(--bc-accent);
+    font-size: 11.5px;
+  }
+
+  /* Thin progress line glued to the bottom edge of a tile: carries
+     information without adding height. */
+  .edge-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--bc-line);
+    overflow: hidden;
+  }
+  .edge-bar > span { position: absolute; top: 0; bottom: 0; transition: left 0.3s, width 0.3s; }
+  .edge-bar .fill { left: 0; }
+  .edge-bar .zero { width: 2px; margin-left: -1px; background: var(--bc-sub); opacity: 0.7; z-index: 1; }
+
   /* ---------- Flow row ---------- */
+  .flow-row {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(56px, auto);
+    gap: var(--bc-gap);
+    margin-bottom: var(--bc-gap);
+  }
+  .flow-row > .unit { grid-column: 1; grid-row: 1 / span 2; }
+  .flow-row > .tur { grid-column: 2; grid-row: 1; }
+  .flow-row > .retur { grid-column: 3; grid-row: 1; }
+  .flow-row > .outdoor-temp { grid-column: 2; grid-row: 2; }
+  .flow-row > .pressure-card { grid-column: 3; grid-row: 2; }
+  .flow-row > .tile-wide { grid-column: 2 / span 2; }
+
   .unit {
-    flex: 0 0 124px;
-    background: var(--bc-box-bg);
-    border: 1px solid var(--bc-border);
-    border-radius: 14px;
-    padding: 8px;
+    padding: 8px 6px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 0;
   }
-  .unit-icons {
+  .unit-text { display: flex; flex-direction: column; align-items: center; }
+  .unit.burning {
+    background: radial-gradient(
+        90% 70% at 50% 35%,
+        color-mix(in srgb, var(--bc-ch) 16%, transparent),
+        transparent 75%
+      ),
+      var(--bc-surface);
+  }
+  .ring {
     position: relative;
-    width: 44px;
-    height: 44px;
+    width: 66px;
+    height: 66px;
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .unit-icons .boiler {
-    --mdc-icon-size: 32px;
-    color: var(--bc-sub);
+  .ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .ring circle { fill: none; stroke-width: 6; stroke-linecap: round; }
+  .ring-bg { stroke: var(--bc-line); }
+  .ring-fg {
+    stroke: var(--bc-ch);
+    transition: stroke-dasharray 0.8s ease;
+    filter: drop-shadow(0 0 4px color-mix(in srgb, var(--bc-ch) 60%, transparent));
   }
-  .unit-icons .flame {
-    position: absolute;
-    bottom: -2px;
-    right: -2px;
-    --mdc-icon-size: 18px;
-    color: var(--bc-flame-idle);
-  }
-  .unit-icons .flame.burning {
-    color: #ff8a5c;
-    animation: flicker 0.9s ease-in-out infinite;
+  .ring .flame { --mdc-icon-size: 25px; color: var(--bc-muted); transition: color 0.3s; }
+  .unit.burning .flame {
+    color: var(--bc-ch);
+    animation: flicker 1.2s ease-in-out infinite;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--bc-ch) 70%, transparent));
   }
   @keyframes flicker {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50% { opacity: 0.75; transform: scale(1.12); }
+    0%, 100% { transform: scale(1) rotate(0); }
+    30% { transform: scale(1.07) rotate(-3deg); }
+    60% { transform: scale(0.96) rotate(2deg); }
   }
+  .unit .val {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--bc-txt);
+    line-height: 1.1;
+    margin-top: -4px;
+  }
+  .unit.burning .val { color: var(--bc-ch); }
   .unit .lbl {
     font-size: 10px;
     letter-spacing: 1px;
     color: var(--bc-sub);
-    font-weight: 600;
-  }
-  .unit .val {
-    font-size: 15px;
     font-weight: 700;
-    color: var(--bc-ch);
   }
 
-  .pipe {
-    background: var(--bc-box-bg);
-    border: 1px solid var(--bc-border);
-    border-radius: 14px;
+  /* ----- Electric border (heat demand) ----- */
+  .unit.electric {
+    box-shadow: 0 0 14px -2px color-mix(in srgb, var(--bc-ch) 55%, transparent),
+      inset 0 0 18px -6px color-mix(in srgb, var(--bc-ch) 70%, transparent);
+  }
+  svg.electric {
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: calc(100% - 2px);
+    height: calc(100% - 2px);
+    overflow: visible;
+    pointer-events: none;
+    filter: drop-shadow(0 0 2px var(--bc-ch)) drop-shadow(0 0 6px #ff6a1f);
+  }
+  svg.electric rect { fill: none; }
+  .eb-halo { stroke: var(--bc-ch); stroke-width: 5; opacity: 0.18; }
+  .eb-arc { stroke: var(--bc-ch); stroke-width: 2.2; }
+  .eb-core { stroke: #ffe6cf; stroke-width: 0.9; opacity: 0.9; }
+  :host([light]) svg.electric { filter: drop-shadow(0 0 2px var(--bc-ch)); }
+  :host([light]) .eb-core { stroke: #fff4ea; }
+
+  /* ----- Sensor tiles ----- */
+  .sensor-tile {
+    --tile: var(--bc-sub);
     padding: 8px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 2px;
+    overflow: hidden;
+  }
+  .sensor-tile.tur { --tile: var(--bc-ch); }
+  .sensor-tile.retur { --tile: var(--bc-dhw); }
+  .sensor-tile.outdoor-temp { --tile: #8fb3ff; }
+  .sensor-tile.pressure-card { --tile: var(--bc-green); }
+  .tile-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--bc-sub);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.7px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .tile-label ha-icon { --mdc-icon-size: 15px; color: var(--tile); flex-shrink: 0; }
+  .tile-value {
+    font-size: 23px;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--bc-txt);
+    white-space: nowrap;
+  }
+  .sensor-tile.tur .tile-value { color: var(--bc-ch); }
+  .sensor-tile.retur .tile-value { color: var(--bc-dhw); }
+  .pressure-value { color: var(--bc-green); }
+
+  .p-scale {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--bc-line);
+  }
+  .p-band {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: color-mix(in srgb, var(--bc-green) 55%, transparent);
+  }
+  .p-mark {
+    position: absolute;
+    bottom: 0;
+    width: 3px;
+    height: 7px;
+    border-radius: 2px 2px 0 0;
+    background: var(--bc-txt);
+    transform: translateX(-50%);
+  }
+  .pressure-card.alarm {
+    --tile: var(--bc-alarm);
+    background: color-mix(in srgb, var(--bc-alarm) 14%, transparent);
+    animation: alarm-glow 1.6s ease-in-out infinite;
+  }
+  .pressure-card.alarm .tile-label,
+  .pressure-card.alarm .pressure-value { color: var(--bc-alarm); }
+  .pressure-card.alarm .p-mark { background: var(--bc-alarm); }
+  @keyframes alarm-glow {
+    0%, 100% { box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--bc-alarm) 30%, transparent); }
+    50% { box-shadow: inset 0 0 0 1px var(--bc-alarm), 0 0 12px color-mix(in srgb, var(--bc-alarm) 40%, transparent); }
+  }
+
+  /* ---------- Controls: offset, consumption, setpoints ---------- */
+  .controls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--bc-gap);
+  }
+  .controls.odd > :first-child { grid-column: 1 / -1; }
+
+  .box {
+    --bx: var(--bc-accent);
+    padding: 8px 10px 11px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+    overflow: hidden;
+  }
+  .box .edge-bar .fill { background: var(--bx); }
+  .box-head {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    position: relative;
-    overflow: hidden;
-    flex: 1;
+    gap: 6px;
+    min-height: 20px;
   }
-  .pipe.tur { border-left: 3px solid var(--bc-ch); }
-  .pipe.retur { border-left: 3px solid #4ecdc4; }
-
-  .offset-box {
-    background: var(--bc-box-bg);
-    border: 1px solid #5dcaa533;
-    border-radius: 14px;
-    padding: 8px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+  .box-title {
+    display: inline-flex;
+    align-items: center;
     gap: 5px;
-    transition: opacity 0.2s;
-  }
-  .offset-box.disabled { opacity: 0.4; }
-  .offset-title {
-    font-size: 11px;
+    font-size: 10.5px;
     color: var(--bc-sub);
-    letter-spacing: 0.5px;
-    font-weight: 600;
-    text-align: center;
-  }
-  .offset-title .sp {
-    color: #4ecdc4;
-    font-size: 17px;
+    letter-spacing: 0.7px;
     font-weight: 700;
+    min-width: 0;
   }
+  .box-title > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .box-title ha-icon { --mdc-icon-size: 15px; color: var(--bx); flex-shrink: 0; }
+
+  .offset-box { --bx: var(--bc-green); }
+  .offset-box.disabled .sp-control,
+  .offset-box.disabled .edge-bar { opacity: 0.4; }
   .offset-value {
-    font-size: 24px;
+    font-size: 27px;
     font-weight: 700;
     color: var(--bc-green);
     line-height: 1;
     text-align: center;
+    min-width: 2.1em;
   }
-  .offset-box .sp-control { padding: 0 2px; max-width: 280px; margin: 0 auto; }
 
-  /* ---------- Offset + consumption row ---------- */
-  .mid-row {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
-    margin: 0 0 8px;
+  .cons-box { --bx: var(--bc-accent); justify-content: flex-start; }
+  .cons-total-val {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--bc-txt);
+    white-space: nowrap;
   }
-  .mid-row.single { grid-template-columns: minmax(0, 1fr); }
-  .mid-row > .offset-box,
-  .mid-row > .cons-box { min-width: 0; box-sizing: border-box; }
-  /* Title on the top line of both boxes; the offset stepper fills the rest. */
-  .mid-row > .offset-box,
-  .mid-row > .cons-box {
-    justify-content: flex-start;
-    padding: 8px 10px;
-  }
-  .mid-row .offset-title { line-height: 20px; min-height: 20px; }
-  .mid-row > .offset-box .sp-control { margin: auto; }
-  .cons-box {
-    background: var(--bc-box-bg);
-    border: 1px solid var(--bc-border);
-    border-radius: 14px;
-    padding: 8px 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 4px;
-  }
-  .cons-row,
-  .cons-total {
+  .cons-rows { display: flex; flex-direction: column; gap: 1px; margin: auto 0; }
+  .split { display: flex; gap: 2px; }
+  .split > span { position: static; display: block; height: 100%; transition: width 0.5s; }
+  .split .dhw { background: var(--bc-dhw); }
+  .split .ch { background: var(--bc-ch); }
+  .cons-row {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
     gap: 6px;
     font-size: 13px;
+    border-radius: 7px;
+    padding: 1px 4px;
+    margin: 0 -4px;
   }
   .cons-name {
     display: inline-flex;
     align-items: center;
-    gap: 4px;
+    gap: 5px;
     color: var(--bc-sub);
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 10.5px;
     letter-spacing: 0.5px;
   }
   .cons-name ha-icon { --mdc-icon-size: 15px; }
-  .cons-name.dhw { color: var(--bc-dhw); }
-  .cons-name.ch { color: var(--bc-ch); }
+  .cons-name.dhw ha-icon { color: var(--bc-dhw); }
+  .cons-name.ch ha-icon { color: var(--bc-ch); }
   .cons-val { font-weight: 600; color: var(--bc-txt); white-space: nowrap; }
-  .cons-total {
-    border-top: 1px solid var(--bc-border);
-    padding-top: 5px;
-    margin-top: 2px;
-  }
-  .cons-total .cons-name { font-size: 11px; }
-  .cons-total-val { font-size: 19px; font-weight: 700; color: var(--bc-txt); white-space: nowrap; }
+  .cons-val .u { font-size: 0.8em; }
 
-  /* ---------- Setpoints row ---------- */
-  .setpoints {
-    display: flex;
-    gap: 8px;
-  }
+  .sp-card.dhw { --bx: var(--bc-dhw); }
+  .sp-card.ch { --bx: var(--bc-ch); }
   .sp-card {
-    flex: 1;
-    background: var(--bc-box-bg);
-    border: 1px solid var(--bc-border);
-    border-radius: 16px;
-    padding: 9px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
+    background: linear-gradient(
+        160deg,
+        color-mix(in srgb, var(--bx) 13%, transparent),
+        color-mix(in srgb, var(--bx) 3%, transparent) 70%
+      ),
+      var(--bc-surface);
   }
-  .sp-card.disabled {
-    opacity: 0.4;
-    pointer-events: none;
+  .sp-val {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--bx);
+    white-space: nowrap;
+    transition: opacity 0.2s;
   }
-  .sp-head {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    justify-content: center;
-  }
-  .sp-head ha-icon { --mdc-icon-size: 17px; }
-  .sp-head .t { font-size: 12px; font-weight: 600; color: var(--bc-txt); letter-spacing: 1px; }
+  .sp-val .u { font-size: 1em; font-weight: 400; color: var(--bx); opacity: 0.6; margin-left: 0; }
+  .sp-card.disabled { background: var(--bc-surface); }
+  .sp-card.disabled .sp-val,
+  .sp-card.disabled .step-btn,
+  .sp-card.disabled .edge-bar { opacity: 0.45; }
+
   .sp-control {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 100%;
-    gap: 8px;
+    gap: 6px;
   }
   .step-btn {
-    width: 44px;
-    height: 34px;
-    border-radius: 11px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
     background: var(--bc-btn-bg);
     border: none;
     color: var(--bc-txt);
-    font-size: 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    padding: 0;
+    transition: background 0.15s, transform 0.1s;
   }
+  .step-btn ha-icon { --mdc-icon-size: 20px; }
   .step-btn:hover:not(:disabled) { background: var(--bc-btn-hover); }
-  .step-btn:active:not(:disabled) { transform: scale(0.95); }
-  .step-btn:disabled { opacity: 0.4; cursor: default; }
-  .sp-val { font-size: 28px; font-weight: 700; transition: opacity 0.2s; }
-  /* Value clicked/dragged but not yet confirmed by the boiler. */
+  .step-btn:active:not(:disabled) { transform: scale(0.92); }
+  .step-btn:disabled { opacity: 0.35; cursor: default; }
+  /* Value clicked but not yet confirmed by the boiler. */
   .sp-val.pending,
-  .offset-value.pending { opacity: 0.6; }
-  .flow-row {
-    display: grid;
-    grid-template-columns: 124px repeat(2, minmax(0, 1fr));
-    grid-template-rows: repeat(2, minmax(56px, 1fr));
-    gap: 6px;
-    margin-bottom: 8px;
-    align-items: stretch;
-  }
+  .offset-value.pending { opacity: 0.55; }
 
-  .flow-row > .unit {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    min-width: 0;
-    box-sizing: border-box;
-  }
-
-  .flow-row > .pipes {
-    display: contents;
-  }
-
-  .flow-row > .pipe.tur {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .flow-row > .pipe.retur {
-    grid-column: 3;
-    grid-row: 1;
-  }
-
-  .flow-row > .sensor-tile {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: space-between;
-    padding: 7px 9px;
-  }
-
-  .sensor-tile .tile-label {
-    align-self: flex-start;
-    color: var(--bc-sub);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.7px;
-    line-height: 1.2;
-    overflow-wrap: anywhere;
-    text-align: left;
-  }
-
-  .sensor-tile .tile-value {
-    align-self: center;
-    color: var(--bc-txt);
-    font-size: 21px;
-    font-weight: 700;
-    line-height: 1.1;
-    margin: auto 0;
-    text-align: center;
-  }
-
-  .flow-row > .pipe.tur .tile-value { color: var(--bc-ch); }
-  .flow-row > .pipe.retur .tile-value { color: var(--bc-dhw); }
-  .flow-row > .outdoor-temp .tile-value { color: var(--bc-txt); }
-
-  .flow-row > .outdoor-temp {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .flow-row > .pressure-card {
-    grid-column: 3;
-    grid-row: 2;
-    background: var(--bc-box-bg);
-    border-left: 3px solid var(--bc-green);
-    cursor: pointer;
-  }
-
-  .pressure-value {
-    color: var(--bc-green) !important;
-  }
-
-  .pressure-value span {
-    color: var(--bc-sub);
-    font-size: 14px;
-    font-weight: 600;
-  }
-
-  .flow-row > .pressure-card.alarm {
-    border-color: var(--bc-alarm);
-    border-left-color: var(--bc-alarm);
-    background: color-mix(in srgb, var(--bc-alarm) 14%, transparent);
-    animation: alarm-glow 1.6s ease-in-out infinite;
-  }
-  .pressure-card.alarm .tile-label { color: var(--bc-alarm); }
-  .pressure-card.alarm .tile-label ha-icon {
-    --mdc-icon-size: 13px;
-    margin-right: 3px;
-    vertical-align: -2px;
-  }
-  .pressure-card.alarm .pressure-value { color: var(--bc-alarm) !important; }
-  @keyframes alarm-glow {
-    0%, 100% { box-shadow: 0 0 0 0 transparent; }
-    50% { box-shadow: 0 0 10px 0 color-mix(in srgb, var(--bc-alarm) 45%, transparent); }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .flow-row > .pressure-card.alarm,
-    .status-badge.offline,
-    .unit-icons .flame.burning { animation: none; }
-  }
-
-  .flow-row > .tile-wide {
-    grid-column: 2 / span 2;
-  }
-
-  ha-card > .offset-box {
-    width: 100%;
-    min-width: 0;
-    box-sizing: border-box;
-    margin: 0 0 8px;
-  }
-
-  @container boiler-card (max-width: 760px) {
-    ha-card {
-      padding: 12px;
-      overflow: hidden;
-    }
-
-    .header {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .title-wrap {
-      flex: 0 0 auto;
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .header-controls {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .badge {
-      padding: 6px 10px;
-      width: 100%;
-      flex: none;
-      justify-content: center;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .flow-row {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      grid-template-rows: repeat(2, minmax(56px, auto));
-      gap: 6px;
-    }
-
-    .unit,
-    .pipes,
-    .sp-card,
-    .pipe {
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .unit {
-      flex-basis: auto;
-      width: 100%;
-      min-width: 0;
-      padding: 8px 6px;
-      grid-column: 1;
-      grid-row: 1 / span 2;
-    }
-
-    .pipe {
-      padding: 8px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-    }
-
-    .flow-row > .sensor-tile {
-      padding: 7px 7px;
-    }
-
-    .sensor-tile .tile-label {
-      font-size: 10px;
-      letter-spacing: 0.5px;
-    }
-
-    .sensor-tile .tile-value {
-      font-size: clamp(17px, 4.5vw, 21px);
-    }
-
-    .pipe.tur {
-      grid-column: 2;
-      grid-row: 1;
-    }
-
-    .pipe.retur {
-      grid-column: 3;
-      grid-row: 1;
-    }
-
-    .flow-row > .outdoor-temp {
-      grid-column: 2;
-      grid-row: 2;
-    }
-
-    .flow-row > .pressure-card {
-      grid-column: 3;
-      grid-row: 2;
-      justify-content: center;
-      align-self: stretch;
-    }
-
-    .flow-row > .tile-wide {
-      grid-column: 2 / span 2;
-    }
-
-    ha-card > .offset-box {
-      width: 100%;
-      min-width: 0;
-      padding: 8px 7px;
-    }
-
-    .offset-box .offset-title {
-      font-size: 10px;
-      line-height: 1.2;
-    }
-
-    .offset-box .offset-value {
-      font-size: 22px;
-    }
-
-    .setpoints {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      align-items: stretch;
-    }
-
-    .sp-card {
-      width: 100%;
-      min-width: 0;
-      padding: 8px 7px;
-      overflow: hidden;
-    }
-
-    .sp-head .t {
-      letter-spacing: 0.6px;
-      font-size: 11px;
-    }
-
-    .sp-val {
-      font-size: clamp(20px, 6vw, 28px);
-      white-space: nowrap;
-    }
-
-    .step-btn {
-      width: 42px;
-      height: 36px;
-      font-size: 18px;
-      flex-shrink: 0;
-    }
-  }
-
-  @container boiler-card (max-width: 420px) {
-    .title-text {
-      font-size: 12px;
-      letter-spacing: 0.7px;
-    }
-
-    .status-badge {
-      font-size: 10px;
-      padding: 3px 8px;
-    }
-
-    .badge .lbl {
-      font-size: 9px;
-    }
-
-    .header {
-      gap: 8px;
-    }
-
-    .unit {
-      padding: 6px 4px;
-    }
-
-    .pipe {
-      padding: 7px 5px;
-    }
-
-    .sensor-tile .tile-value {
-      font-size: clamp(16px, 4.5vw, 20px);
-    }
-
-    .setpoints {
-      gap: 7px;
-    }
-  }
-
-  @media (max-width: 760px) {
-    .header {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr);
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .title-wrap {
-      grid-column: 1;
-      width: 100%;
-      min-width: 0;
-      flex: none;
-      box-sizing: border-box;
-    }
-
-    .header-controls {
-      display: grid;
-      grid-column: 1;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      width: 100%;
-      min-width: 0;
-      box-sizing: border-box;
-    }
-
-    .header-controls .badge {
-      width: 100%;
-      min-width: 0;
-      flex: none;
-      gap: 5px;
-      padding: 6px 4px;
-      box-sizing: border-box;
-      overflow: hidden;
-    }
-
-    .header-controls .lbl {
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: clamp(8px, 2.4vw, 10px);
-    }
-  }
-
-  @media (min-width: 761px) {
-    .flow-row {
-      grid-template-rows: repeat(2, 72px);
-      gap: 6px;
-      margin-bottom: 8px;
-    }
-
-    .flow-row > .unit {
-      padding: 6px;
-      gap: 3px;
-    }
-
-    .unit-icons {
-      width: 38px;
-      height: 38px;
-    }
-
-    .unit-icons .boiler {
-      --mdc-icon-size: 30px;
-    }
-
-    .unit-icons .flame {
-      --mdc-icon-size: 17px;
-    }
-
-    .sensor-tile {
-      padding: 6px 8px;
-    }
-
-    .sensor-tile .tile-label {
-      font-size: 10px;
-    }
-
-    .sensor-tile .tile-value {
-      font-size: 20px;
-    }
-
-    ha-card > .offset-box {
-      padding: 6px 10px;
-      gap: 3px;
-      margin-bottom: 8px;
-    }
-
-    .offset-title {
-      font-size: 10px;
-    }
-
-    .offset-title .sp {
-      font-size: 15px;
-    }
-
-    .offset-value {
-      font-size: 20px;
-    }
-  }
-
-  .clickable { cursor: pointer; }
   .clickable:focus-visible,
   .badge:focus-visible,
   .step-btn:focus-visible {
     outline: 2px solid var(--bc-accent);
     outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pressure-card.alarm,
+    .status-badge.offline,
+    .status-dot.live,
+    .unit.burning .flame { animation: none; }
+  }
+
+  /* ================= Responsive =================
+     Phone (default): toggles on a second header row, 2-row sensor block,
+     controls in 2 columns.
+     Tablet (≥ 600px): header on one row, sensors on one row.
+     Desktop (≥ 780px): controls on one row as well. */
+
+  @container boiler-card (max-width: 599px) {
+    .header-controls {
+      flex: 1 1 100%;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @container boiler-card (max-width: 400px) {
+    ha-card { padding: 10px; }
+    :host { --bc-gap: 6px; }
+    .ring { width: 56px; height: 56px; }
+    .ring .flame { --mdc-icon-size: 22px; }
+    .unit .val { font-size: 17px; }
+    .sensor-tile { padding: 7px 8px; }
+    .tile-value { font-size: 20px; }
+    .tile-label { font-size: 10px; letter-spacing: 0.4px; }
+    .sp-val { font-size: 25px; }
+    .offset-value { font-size: 23px; }
+    .step-btn { width: 34px; height: 34px; }
+    .box { padding: 7px 8px 10px; }
+    .box-title { font-size: 10px; letter-spacing: 0.4px; }
+    .title-text { font-size: 14px; }
+    .status-badge { font-size: 10px; }
+  }
+  @container boiler-card (max-width: 330px) {
+    .controls { grid-template-columns: minmax(0, 1fr); }
+    .controls.odd > :first-child { grid-column: auto; }
+  }
+
+  @container boiler-card (min-width: 600px) {
+    .flow-row {
+      grid-template-columns: minmax(0, 1.25fr) repeat(4, minmax(0, 1fr));
+      grid-auto-rows: minmax(68px, auto);
+    }
+    .flow-row > * { grid-row: 1 !important; grid-column: auto !important; }
+    .flow-row > .tile-wide { grid-column: span 2 !important; }
+    .unit { flex-direction: row; gap: 8px; padding: 6px 10px; }
+    .unit-text { align-items: flex-start; }
+    .ring { width: 54px; height: 54px; }
+    .ring .flame { --mdc-icon-size: 21px; }
+    .unit .val { margin-top: 0; }
+  }
+
+  @container boiler-card (min-width: 780px) {
+    .controls { grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
+    .controls.odd > :first-child { grid-column: auto; }
+  }
+
+  @container boiler-card (min-width: 1000px) {
+    :host { --bc-gap: 9px; }
+    ha-card { padding: 14px; }
+    .tile-value { font-size: 26px; }
+    .sp-val { font-size: 32px; }
   }
 `;

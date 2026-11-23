@@ -1,4 +1,4 @@
-import { LitElement, html, nothing, TemplateResult, PropertyValues } from "lit";
+import { LitElement, html, svg, nothing, TemplateResult, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { HomeAssistant, fireEvent } from "custom-card-helpers";
 import { BoilerCardConfig, CARD_VERSION, DEFAULTS, mapStatus, StatusKind } from "./types";
@@ -284,41 +284,48 @@ export class EbusdClasOneCard extends LitElement {
   protected render(): TemplateResult | typeof nothing {
     if (!this.config || !this.hass) return nothing;
     const offline = this.isOffline();
+    const { kind } = this.statusInfo(offline);
     return html`
-      <ha-card>
-        ${this.renderHeader(offline)} ${this.renderFlowRow()} ${this.renderMiddle(offline)}
-        ${this.renderSetpoints(offline)}
+      <ha-card class="st-${kind}" style="--st:${STATUS_COLORS[kind]};">
+        ${this.renderHeader(offline)} ${this.renderFlowRow(kind)} ${this.renderControls(offline)}
       </ha-card>
     `;
   }
 
+  private statusInfo(offline: boolean): { label: string; kind: StatusKind } {
+    return offline
+      ? { label: "EBUS OFFLINE", kind: "offline" }
+      : mapStatus(this.st(this.config.status_entity)?.state);
+  }
+
   private renderHeader(offline: boolean): TemplateResult {
     const c = this.config;
-    const { label, kind } = offline
-      ? { label: "EBUS OFFLINE", kind: "offline" as StatusKind }
-      : mapStatus(this.st(c.status_entity)?.state);
-    const col = STATUS_COLORS[kind];
+    const { label, kind } = this.statusInfo(offline);
     // Clicking the badge opens the entity that explains the current state.
     const badgeEntity =
       offline && c.connection_entity ? c.connection_entity : c.status_entity ?? c.connection_entity;
     const openBadge = () => this.moreInfo(badgeEntity);
+    const active = kind === "ch" || kind === "dhw";
 
     return html`
       <div class="header">
         <div class="title-wrap">
-          <div class="title-icon"><ha-icon icon="mdi:water-boiler"></ha-icon></div>
+          <div class="title-icon ${active ? "active" : ""}">
+            <ha-icon icon="mdi:water-boiler"></ha-icon>
+          </div>
           <div class="title-text">${c.title ?? DEFAULTS.title}</div>
           ${badgeEntity
             ? html`<div
                 class="status-badge clickable ${kind}"
-                style="color:${col};border:1px solid ${col}44;background:${col}14;"
                 role="button"
                 tabindex="0"
                 title=${offline ? "ebusd / eBUS nu răspunde" : label}
                 @click=${openBadge}
                 @keydown=${this.onKey(openBadge)}
               >
-                ${offline ? html`<ha-icon icon="mdi:lan-disconnect"></ha-icon>` : nothing}${label}
+                ${offline
+                  ? html`<ha-icon icon="mdi:lan-disconnect"></ha-icon>`
+                  : html`<span class="status-dot ${active ? "live" : ""}"></span>`}${label}
               </div>`
             : nothing}
         </div>
@@ -336,7 +343,8 @@ export class EbusdClasOneCard extends LitElement {
             ? this.renderToggle(
                 c.thermoreg_entity,
                 c.thermoreg_label ?? DEFAULTS.thermoreg_label,
-                "tr"
+                "tr",
+                "mdi:home-thermometer-outline"
               )
             : nothing}
         </div>
@@ -364,58 +372,111 @@ export class EbusdClasOneCard extends LitElement {
         @click=${act}
         @keydown=${this.onKey(act)}
       >
-        ${kind === "tr" ? html`<span class="dot"></span>` : nothing}
         ${icon ? html`<ha-icon icon=${icon}></ha-icon>` : nothing}
         <span class="lbl">${label}</span>
-        ${kind === "ch" ? html`<span class="dot"></span>` : nothing}
+        <span class="track"><span class="knob"></span></span>
       </div>
     `;
   }
 
-  private renderFlowRow(): TemplateResult {
+  /**
+   * Animated "electric" outline: an SVG rect distorted by turbulence noise
+   * whose seed changes in discrete steps, giving a crackling arc effect.
+   */
+  private renderElectric(): TemplateResult {
+    const id = this.electricId;
+    const animate = !this.reducedMotion();
+    const seeds = "1;4;7;2;9;5;3;8;6;10;12;11";
+    return html`
+      <svg class="electric" aria-hidden="true">
+        <defs>
+          <filter id=${id} x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+            <feTurbulence type="turbulence" baseFrequency="0.032" numOctaves="4" seed="1" result="noise">
+              ${animate
+                ? svg`<animate attributeName="seed" values=${seeds} dur="1.1s" calcMode="discrete" repeatCount="indefinite"></animate>`
+                : nothing}
+            </feTurbulence>
+            <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+          </filter>
+        </defs>
+        <rect class="eb-halo" width="100%" height="100%" rx="13"></rect>
+        <rect class="eb-arc" width="100%" height="100%" rx="13" filter="url(#${id})"></rect>
+        <rect class="eb-core" width="100%" height="100%" rx="13" filter="url(#${id})"></rect>
+      </svg>
+    `;
+  }
+
+  private readonly electricId = `eb-${Math.random().toString(36).slice(2, 9)}`;
+  private reducedMotion(): boolean {
+    return !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  private renderFlowRow(kind: StatusKind): TemplateResult {
     const c = this.config;
     const flame = this.num(c.flame_power_entity);
     const burning = (flame ?? 0) > 0.1;
+    // The boiler is asking for heat: heating/DHW status or a lit burner.
+    const demand = burning || kind === "ch" || kind === "dhw";
+    const electric = demand && c.electric_border !== false;
     const openFlame = () => this.moreInfo(c.flame_power_entity);
+    const fmax = c.flame_max ?? DEFAULTS.flame_max;
+    const frac = Math.max(0, Math.min(1, (flame ?? 0) / (fmax || 1)));
+    // Ring gauge: r=34, 270° arc.
+    const C = 2 * Math.PI * 34;
+    const arc = C * 0.75;
 
     return html`
       <div class="flow-row">
         <div
-          class="unit clickable"
+          class="unit clickable ${burning ? "burning" : ""} ${electric ? "electric" : ""}"
           role="button"
           tabindex="0"
+          title="${c.flame_label ?? DEFAULTS.flame_label}: ${this.fmt(flame, 1, " kW")}"
           @click=${openFlame}
           @keydown=${this.onKey(openFlame)}
         >
-          <div class="unit-icons">
-            <ha-icon class="boiler" icon="mdi:water-boiler"></ha-icon>
-            <ha-icon class="flame ${burning ? "burning" : ""}" icon="mdi:fire"></ha-icon>
+          ${electric ? this.renderElectric() : nothing}
+          <div class="ring">
+            <svg viewBox="0 0 80 80" aria-hidden="true">
+              <circle class="ring-bg" cx="40" cy="40" r="34"
+                stroke-dasharray="${arc} ${C}" transform="rotate(135 40 40)"></circle>
+              <circle class="ring-fg" cx="40" cy="40" r="34" opacity=${frac > 0 ? 1 : 0}
+                stroke-dasharray="${arc * frac} ${C}" transform="rotate(135 40 40)"></circle>
+            </svg>
+            <ha-icon class="flame" icon="mdi:fire"></ha-icon>
           </div>
-          <div class="lbl">${c.flame_label ?? DEFAULTS.flame_label}</div>
-          <div class="val">${this.fmt(flame, 1, " kW")}</div>
+          <div class="unit-text">
+            <div class="val">
+              ${flame === undefined ? "—" : flame.toFixed(1)}<span class="u">kW</span>
+            </div>
+            <div class="lbl">${c.flame_label ?? DEFAULTS.flame_label}</div>
+          </div>
         </div>
 
-        <div class="pipes">
-          ${this.renderTemperatureTile(
-            c.flow_temp_entity,
-            c.flow_temp_label ?? DEFAULTS.flow_temp_label,
-            this.fmt(this.num(c.flow_temp_entity)),
-            "tur"
-          )}
-          ${this.renderTemperatureTile(
-            c.return_temp_entity,
-            c.return_temp_label ?? DEFAULTS.return_temp_label,
-            this.fmt(this.num(c.return_temp_entity)),
-            "retur"
-          )}
-        </div>
-
+        ${this.renderTemperatureTile(
+          c.flow_temp_entity,
+          c.flow_temp_label ?? DEFAULTS.flow_temp_label,
+          this.num(c.flow_temp_entity),
+          0,
+          "tur",
+          "mdi:thermometer-chevron-up"
+        )}
+        ${this.renderTemperatureTile(
+          c.return_temp_entity,
+          c.return_temp_label ?? DEFAULTS.return_temp_label,
+          this.num(c.return_temp_entity),
+          0,
+          "retur",
+          "mdi:thermometer-chevron-down"
+        )}
         ${c.outdoor_temp_entity
           ? this.renderTemperatureTile(
               c.outdoor_temp_entity,
               c.outdoor_temp_label ?? DEFAULTS.outdoor_temp_label,
-              this.fmt(this.num(c.outdoor_temp_entity), 1, "°C"),
+              this.num(c.outdoor_temp_entity),
+              1,
               "outdoor-temp",
+              "mdi:home-export-outline",
               !c.pressure_entity
             )
           : nothing}
@@ -429,8 +490,10 @@ export class EbusdClasOneCard extends LitElement {
   private renderTemperatureTile(
     entity: string | undefined,
     label: string,
-    value: string,
+    value: number | undefined,
+    digits: number,
     className: string,
+    icon: string,
     alone = false
   ): TemplateResult {
     const open = () => this.moreInfo(entity);
@@ -442,8 +505,10 @@ export class EbusdClasOneCard extends LitElement {
         @click=${open}
         @keydown=${this.onKey(open)}
       >
-        <span class="tile-label">${label}</span>
-        <span class="tile-value">${value}</span>
+        <span class="tile-label"><ha-icon icon=${icon}></ha-icon>${label}</span>
+        <span class="tile-value"
+          >${value === undefined ? "—" : value.toFixed(digits)}<span class="u">°C</span></span
+        >
       </div>
     `;
   }
@@ -459,6 +524,9 @@ export class EbusdClasOneCard extends LitElement {
     const label = c.pressure_label ?? DEFAULTS.pressure_label;
     const hint = low ? `Presiune sub ${lo} bar` : high ? `Presiune peste ${hi} bar` : label;
     const open = () => this.moreInfo(entity);
+    // Scale 0..3 bar; the green band marks the configured normal range.
+    const SCALE = Math.max(3, hi + 0.5);
+    const pct = (v: number) => `${Math.max(0, Math.min(100, (v / SCALE) * 100))}%`;
     return html`
       <div
         class="pipe sensor-tile pressure-card clickable ${alarm ? "alarm" : ""} ${alone
@@ -471,25 +539,70 @@ export class EbusdClasOneCard extends LitElement {
         @keydown=${this.onKey(open)}
       >
         <span class="tile-label"
-          >${alarm ? html`<ha-icon icon="mdi:alert-circle"></ha-icon>` : nothing}${label}</span
+          ><ha-icon icon=${alarm ? "mdi:alert-circle" : "mdi:gauge"}></ha-icon>${label}</span
         >
-        <span class="tile-value pressure-value">
-          ${p === undefined ? "—" : p.toFixed(1)}<span> bar</span>
-        </span>
+        <span class="tile-value pressure-value"
+          >${p === undefined ? "—" : p.toFixed(1)}<span class="u">bar</span></span
+        >
+        <div class="p-scale" aria-hidden="true">
+          <span class="p-band" style="left:${pct(lo)};right:calc(100% - ${pct(hi)});"></span>
+          ${p !== undefined ? html`<span class="p-mark" style="left:${pct(p)};"></span>` : nothing}
+        </div>
       </div>
     `;
   }
 
-  private renderMiddle(offline: boolean): TemplateResult | typeof nothing {
+  /**
+   * Offset, consumption and the two setpoints share one grid: 2 columns on
+   * phones, a single row on tablets / desktops (see the container queries).
+   */
+  private renderControls(offline: boolean): TemplateResult {
     const c = this.config;
-    const hasConsumption = !!(c.dhw_consumption_entity || c.ch_consumption_entity);
-    const offset = this.renderOffset(offline);
-    if (!hasConsumption) return offset;
-    return html`
-      <div class="mid-row ${offset === nothing ? "single" : ""}">
-        ${offset} ${this.renderConsumption()}
-      </div>
-    `;
+    const chLocked = this.isOn(c.thermoreg_entity);
+    const items = [
+      this.renderOffset(offline),
+      c.dhw_consumption_entity || c.ch_consumption_entity ? this.renderConsumption() : nothing,
+      this.renderSetpointCard(
+        "dhw",
+        "mdi:shower-head",
+        c.dhw_setpoint_label ?? DEFAULTS.dhw_setpoint_label,
+        c.dhw_setpoint_entity,
+        c.dhw_setpoint_display_entity ?? c.dhw_setpoint_entity,
+        this.limits(c.dhw_setpoint_entity, c.dhw_min, c.dhw_max, c.dhw_step, DEFAULTS.dhw),
+        offline
+      ),
+      // With thermoregulation on, the CH setpoint is driven by the offset.
+      this.renderSetpointCard(
+        "ch",
+        "mdi:radiator",
+        c.ch_setpoint_label ?? DEFAULTS.ch_setpoint_label,
+        c.ch_setpoint_entity,
+        c.ch_setpoint_display_entity ?? c.ch_setpoint_entity,
+        this.limits(c.ch_setpoint_entity, c.ch_min, c.ch_max, c.ch_step, DEFAULTS.ch),
+        offline || chLocked,
+        !offline && chLocked
+      ),
+    ].filter((t) => t !== nothing);
+    if (!items.length) return html``;
+    return html`<div class="controls ${items.length % 2 ? "odd" : ""}" style="--n:${items.length};">
+      ${items}
+    </div>`;
+  }
+
+  private stepBtn(
+    label: string,
+    dir: -1 | 1,
+    disabled: boolean,
+    onClick: () => void
+  ): TemplateResult {
+    return html`<button
+      class="step-btn"
+      aria-label="${label} ${dir < 0 ? "−" : "+"}"
+      ?disabled=${disabled}
+      @click=${onClick}
+    >
+      <ha-icon icon=${dir < 0 ? "mdi:minus" : "mdi:plus"}></ha-icon>
+    </button>`;
   }
 
   private renderOffset(offline: boolean): TemplateResult | typeof nothing {
@@ -519,32 +632,37 @@ export class EbusdClasOneCard extends LitElement {
       if (next === shown) return;
       this.queueNumber(id, next, SETPOINT_DEBOUNCE_MS);
     };
+    // Edge bar: filled from 0 towards the current offset on the min..max scale.
+    const span = max - min || 1;
+    const zero = Math.max(0, Math.min(100, ((0 - min) / span) * 100));
+    const pos = shown === undefined ? zero : ((shown - min) / span) * 100;
 
     return html`
-      <div class="offset-box ${disabled ? "disabled" : ""}">
-        <div class="offset-title">
-          ${label}${computed !== undefined
-            ? html` <span class="sp">| ${computed.toFixed(0)}°</span>`
+      <div class="box offset-box ${disabled ? "disabled" : ""}">
+        <div class="box-head">
+          <span class="box-title" title=${label}
+            ><ha-icon icon="mdi:tune-vertical-variant"></ha-icon><span>${label}</span></span
+          >
+          ${computed !== undefined
+            ? html`<span class="chip accent" title="Tur calculat de termoreglare"
+                ><ha-icon icon="mdi:arrow-right-thin"></ha-icon>${computed.toFixed(0)}°</span
+              >`
+            : !trOn
+            ? html`<span class="chip">OFF</span>`
             : nothing}
         </div>
         <div class="sp-control">
-          <button
-            class="step-btn"
-            aria-label="${label} −"
-            ?disabled=${disabled || (shown !== undefined && shown <= min)}
-            @click=${() => change(-step)}
-          >
-            −
-          </button>
+          ${this.stepBtn(label, -1, disabled || (shown !== undefined && shown <= min), () =>
+            change(-step)
+          )}
           <span class="offset-value ${pending ? "pending" : ""}">${offsetStr}</span>
-          <button
-            class="step-btn"
-            aria-label="${label} +"
-            ?disabled=${disabled || (shown !== undefined && shown >= max)}
-            @click=${() => change(step)}
-          >
-            +
-          </button>
+          ${this.stepBtn(label, 1, disabled || (shown !== undefined && shown >= max), () =>
+            change(step)
+          )}
+        </div>
+        <div class="edge-bar" aria-hidden="true">
+          <span class="zero" style="left:${zero}%;"></span>
+          <span class="fill" style="left:${Math.min(pos, zero)}%;width:${Math.abs(pos - zero)}%;"></span>
         </div>
       </div>
     `;
@@ -559,7 +677,9 @@ export class EbusdClasOneCard extends LitElement {
     const dhw = this.num(c.dhw_consumption_entity);
     const ch = this.num(c.ch_consumption_entity);
     const total = dhw === undefined && ch === undefined ? undefined : (dhw ?? 0) + (ch ?? 0);
-    const fmt = (v: number | undefined) => this.fmt(v, digits, ` ${unit}`);
+    const share = (v?: number) => (total && v ? Math.max(0, (v / total) * 100) : 0);
+    const val = (v: number | undefined) =>
+      v === undefined ? "—" : html`${v.toFixed(digits)}<span class="u">${unit}</span>`;
     const row = (icon: string, cls: string, name: string, id: string | undefined, v?: number) =>
       id
         ? html`
@@ -571,60 +691,41 @@ export class EbusdClasOneCard extends LitElement {
               @keydown=${this.onKey(() => this.moreInfo(id))}
             >
               <span class="cons-name ${cls}"><ha-icon icon=${icon}></ha-icon>${name}</span>
-              <span class="cons-val">${fmt(v)}</span>
+              <span class="cons-val">${val(v)}</span>
             </div>
           `
         : nothing;
     return html`
-      <div class="cons-box">
-        <div class="offset-title">${c.consumption_label ?? DEFAULTS.consumption_label}</div>
-        ${row("mdi:shower-head", "dhw", "DHW", c.dhw_consumption_entity, dhw)}
-        ${row("mdi:radiator", "ch", "CH", c.ch_consumption_entity, ch)}
-        <div class="cons-total">
-          <span class="cons-name">TOTAL</span>
-          <span class="cons-total-val">${fmt(total)}</span>
+      <div class="box cons-box">
+        <div class="box-head">
+          <span class="box-title"
+            ><ha-icon icon="mdi:lightning-bolt-outline"></ha-icon><span
+              >${c.consumption_label ?? DEFAULTS.consumption_label}</span
+            ></span
+          >
+          <span class="cons-total-val">${val(total)}</span>
+        </div>
+        <div class="cons-rows">
+          ${row("mdi:shower-head", "dhw", "DHW", c.dhw_consumption_entity, dhw)}
+          ${row("mdi:radiator", "ch", "CH", c.ch_consumption_entity, ch)}
+        </div>
+        <div class="edge-bar split" aria-hidden="true">
+          <span class="dhw" style="width:${share(dhw)}%;"></span>
+          <span class="ch" style="width:${share(ch)}%;"></span>
         </div>
       </div>
     `;
   }
 
-  private renderSetpoints(offline: boolean): TemplateResult {
-    const c = this.config;
-    // When thermoregulation is on, the CH setpoint is driven by the offset, so
-    // the manual CH setpoint control is inactive.
-    const chLocked = this.isOn(c.thermoreg_entity);
-    return html`
-      <div class="setpoints">
-        ${this.renderSetpointCard(
-          "mdi:shower-head",
-          "#4ecdc4",
-          c.dhw_setpoint_label ?? DEFAULTS.dhw_setpoint_label,
-          c.dhw_setpoint_entity,
-          c.dhw_setpoint_display_entity ?? c.dhw_setpoint_entity,
-          this.limits(c.dhw_setpoint_entity, c.dhw_min, c.dhw_max, c.dhw_step, DEFAULTS.dhw),
-          offline
-        )}
-        ${this.renderSetpointCard(
-          "mdi:radiator",
-          "#ff8a5c",
-          c.ch_setpoint_label ?? DEFAULTS.ch_setpoint_label,
-          c.ch_setpoint_entity,
-          c.ch_setpoint_display_entity ?? c.ch_setpoint_entity,
-          this.limits(c.ch_setpoint_entity, c.ch_min, c.ch_max, c.ch_step, DEFAULTS.ch),
-          offline || chLocked
-        )}
-      </div>
-    `;
-  }
-
   private renderSetpointCard(
+    kind: "dhw" | "ch",
     icon: string,
-    color: string,
     label: string,
     setEntity: string | undefined,
     displayEntity: string | undefined,
     { min, max, step }: Limits,
-    locked: boolean
+    locked: boolean,
+    auto = false
   ): TemplateResult | typeof nothing {
     if (!setEntity) return nothing;
     // The control entity (a number) is the source of truth: it writes the value
@@ -643,33 +744,32 @@ export class EbusdClasOneCard extends LitElement {
       if (next === shown) return;
       this.queueNumber(setEntity, next, SETPOINT_DEBOUNCE_MS);
     };
+    const pct =
+      shown === undefined ? 0 : Math.max(0, Math.min(100, ((shown - min) / (max - min || 1)) * 100));
     return html`
-      <div class="sp-card ${disabled ? "disabled" : ""}">
-        <div class="sp-head">
-          <ha-icon icon=${icon} style="color:${color};"></ha-icon>
-          <span class="t">${label}</span>
+      <div class="box sp-card ${kind} ${disabled ? "disabled" : ""}">
+        <div class="box-head">
+          <span class="box-title" title=${label}
+            ><ha-icon icon=${icon}></ha-icon><span>${label}</span></span
+          >
+          ${auto
+            ? html`<span class="chip" title="Setat automat de termoreglare"
+                ><ha-icon icon="mdi:lock-outline"></ha-icon>AUTO</span
+              >`
+            : nothing}
         </div>
         <div class="sp-control">
-          <button
-            class="step-btn"
-            aria-label="${label} −"
-            ?disabled=${disabled || (shown !== undefined && shown <= min)}
-            @click=${() => change(-step)}
+          ${this.stepBtn(label, -1, disabled || (shown !== undefined && shown <= min), () =>
+            change(-step)
+          )}
+          <span class="sp-val ${pending ? "pending" : ""}"
+            >${shown === undefined ? "—" : shown.toFixed(digits)}<span class="u">°</span></span
           >
-            −
-          </button>
-          <span class="sp-val ${pending ? "pending" : ""}" style="color:${color};"
-            >${this.fmt(shown, digits)}</span
-          >
-          <button
-            class="step-btn"
-            aria-label="${label} +"
-            ?disabled=${disabled || (shown !== undefined && shown >= max)}
-            @click=${() => change(step)}
-          >
-            +
-          </button>
+          ${this.stepBtn(label, 1, disabled || (shown !== undefined && shown >= max), () =>
+            change(step)
+          )}
         </div>
+        <div class="edge-bar" aria-hidden="true"><span class="fill" style="width:${pct}%;"></span></div>
       </div>
     `;
   }

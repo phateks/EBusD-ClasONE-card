@@ -18,6 +18,8 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   // Flow unit
   flame_power_entity?: string; // sensor.ebusd_boiler_flame_power_kw
   flame_label?: string;
+  flame_max?: number; // full scale of the flame ring, kW (default 24)
+  electric_border?: boolean; // animated electric outline on the flame tile during heat demand (default true)
   flow_temp_entity?: string; // TUR  (sensor.ebusd_boiler_lwt_temp)
   return_temp_entity?: string; // RETUR (sensor.ebusd_boiler_ewt_temp)
   outdoor_temp_entity?: string; // Outdoor temperature sensor
@@ -69,6 +71,7 @@ export const DEFAULTS = {
   ch_switch_label: "CH",
   thermoreg_label: "TERMOREGLARE",
   flame_label: "FLAME",
+  flame_max: 24,
   flow_temp_label: "TUR",
   return_temp_label: "RETUR",
   outdoor_temp_label: "EXT",
