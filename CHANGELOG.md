@@ -5,14 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.2] - 2026-11-23
+
+### Added
+
+- `flame_glow` option (default `true`): a soft glow on the flame tile while
+  the boiler is asking for heat (CH/DHW status or a lit burner). Set
+  `flame_glow: false` to turn it off. The visual editor has a toggle for it.
 
 ### Changed
 
-- The animated "electric" outline around the flame tile was removed. During
-  heat demand the flame tile now shows only a soft, subdued glow. Turn it off
-  with the new `flame_glow: false` option (`electric_border: false` from 1.0.0
-  still works).
+- Removed the animated "electric" outline around the flame tile. While the
+  boiler is asking for heat, the flame tile now shows only the soft glow.
+- `electric_border` is deprecated and the visual editor no longer shows it.
+  `electric_border: false` from 1.0.0 still works and turns the glow off.
 
 ## [1.0.1] - 2026-11-23
 
@@ -189,6 +195,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inconsistent editor class naming between card and editor registrations.
 - Stale v1.0.0 bundle being served from a duplicate `dist/` copy.
 
+[1.0.2]: ../../compare/v1.0.1...v1.0.2
 [1.0.1]: ../../compare/v1.0.0...v1.0.1
 [1.0.0]: ../../compare/v0.3.1...v1.0.0
 [0.3.1]: ../../compare/v0.3.0...v0.3.1
