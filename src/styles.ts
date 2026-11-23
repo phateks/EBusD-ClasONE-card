@@ -333,20 +333,23 @@ export const styles = css`
     font-weight: 700;
   }
 
-  /* ----- Electric border (heat demand) ----- */
-  svg.electric {
-    position: absolute;
-    top: 1px;
-    left: 1px;
-    width: calc(100% - 2px);
-    height: calc(100% - 2px);
-    overflow: visible;
-    pointer-events: none;
+  /* ----- Soft glow on the flame tile (heat demand) ----- */
+  .unit.glow {
+    background: radial-gradient(
+        90% 70% at 50% 40%,
+        color-mix(in srgb, var(--bc-ch) 9%, transparent),
+        transparent 75%
+      ),
+      var(--bc-surface);
+    box-shadow: 0 0 10px -4px color-mix(in srgb, var(--bc-ch) 35%, transparent),
+      inset 0 0 0 1px color-mix(in srgb, var(--bc-ch) 22%, transparent);
   }
-  svg.electric rect { fill: none; }
-  .eb-arc { stroke: var(--bc-ch); stroke-width: 2.2; }
-  .eb-core { stroke: #ffe6cf; stroke-width: 0.9; opacity: 0.9; }
-  :host([light]) .eb-core { stroke: #fff4ea; }
+  .unit.glow .ring-fg {
+    filter: drop-shadow(0 0 2px color-mix(in srgb, var(--bc-ch) 40%, transparent));
+  }
+  .unit.glow.burning .flame {
+    filter: drop-shadow(0 0 3px color-mix(in srgb, var(--bc-ch) 45%, transparent));
+  }
 
   /* ----- Sensor tiles ----- */
   .sensor-tile {

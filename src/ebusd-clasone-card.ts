@@ -1,4 +1,4 @@
-import { LitElement, html, svg, nothing, TemplateResult, PropertyValues } from "lit";
+import { LitElement, html, nothing, TemplateResult, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { HomeAssistant, fireEvent } from "custom-card-helpers";
 import { BoilerCardConfig, CARD_VERSION, DEFAULTS, mapStatus, StatusKind } from "./types";
@@ -379,44 +379,14 @@ export class EbusdClasOneCard extends LitElement {
     `;
   }
 
-  /**
-   * Animated "electric" outline: an SVG rect distorted by turbulence noise
-   * whose seed changes in discrete steps, giving a crackling arc effect.
-   */
-  private renderElectric(): TemplateResult {
-    const id = this.electricId;
-    const animate = !this.reducedMotion();
-    const seeds = "1;4;7;2;9;5;3;8;6;10;12;11";
-    return html`
-      <svg class="electric" aria-hidden="true">
-        <defs>
-          <filter id=${id} x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
-            <feTurbulence type="turbulence" baseFrequency="0.032" numOctaves="4" seed="1" result="noise">
-              ${animate
-                ? svg`<animate attributeName="seed" values=${seeds} dur="1.1s" calcMode="discrete" repeatCount="indefinite"></animate>`
-                : nothing}
-            </feTurbulence>
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="10" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
-          </filter>
-        </defs>
-        <rect class="eb-arc" width="100%" height="100%" rx="13" filter="url(#${id})"></rect>
-        <rect class="eb-core" width="100%" height="100%" rx="13" filter="url(#${id})"></rect>
-      </svg>
-    `;
-  }
-
-  private readonly electricId = `eb-${Math.random().toString(36).slice(2, 9)}`;
-  private reducedMotion(): boolean {
-    return !!window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-  }
-
   private renderFlowRow(kind: StatusKind): TemplateResult {
     const c = this.config;
     const flame = this.num(c.flame_power_entity);
     const burning = (flame ?? 0) > 0.1;
     // The boiler is asking for heat: heating/DHW status or a lit burner.
     const demand = burning || kind === "ch" || kind === "dhw";
-    const electric = demand && c.electric_border !== false;
+    // Soft glow on the flame tile; `electric_border: false` (1.0.0) also turns it off.
+    const glow = demand && c.flame_glow !== false && c.electric_border !== false;
     const openFlame = () => this.moreInfo(c.flame_power_entity);
     const fmax = c.flame_max ?? DEFAULTS.flame_max;
     const frac = Math.max(0, Math.min(1, (flame ?? 0) / (fmax || 1)));
@@ -427,14 +397,13 @@ export class EbusdClasOneCard extends LitElement {
     return html`
       <div class="flow-row">
         <div
-          class="unit clickable ${burning ? "burning" : ""} ${electric ? "electric" : ""}"
+          class="unit clickable ${burning ? "burning" : ""} ${glow ? "glow" : ""}"
           role="button"
           tabindex="0"
           title="${c.flame_label ?? DEFAULTS.flame_label}: ${this.fmt(flame, 1, " kW")}"
           @click=${openFlame}
           @keydown=${this.onKey(openFlame)}
         >
-          ${electric ? this.renderElectric() : nothing}
           <div class="ring">
             <svg viewBox="0 0 80 80" aria-hidden="true">
               <circle class="ring-bg" cx="40" cy="40" r="34"

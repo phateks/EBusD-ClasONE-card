@@ -19,7 +19,9 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   flame_power_entity?: string; // sensor.ebusd_boiler_flame_power_kw
   flame_label?: string;
   flame_max?: number; // full scale of the flame ring, kW (default 24)
-  electric_border?: boolean; // animated electric outline on the flame tile during heat demand (default true)
+  flame_glow?: boolean; // soft glow on the flame tile during heat demand (default true)
+  /** @deprecated since 1.0.1 — the electric outline was removed; `false` still turns the glow off. */
+  electric_border?: boolean;
   flow_temp_entity?: string; // TUR  (sensor.ebusd_boiler_lwt_temp)
   return_temp_entity?: string; // RETUR (sensor.ebusd_boiler_ewt_temp)
   outdoor_temp_entity?: string; // Outdoor temperature sensor

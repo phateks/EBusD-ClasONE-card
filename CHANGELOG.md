@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- The animated "electric" outline around the flame tile was removed. During
+  heat demand the flame tile now shows only a soft, subdued glow. Turn it off
+  with the new `flame_glow: false` option (`electric_border: false` from 1.0.0
+  still works).
+- Flow, return, outdoor and pressure values are right-aligned under their
+  labels.
+
 ## [1.0.0] - 2026-11-23
 
 ### Added

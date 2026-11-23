@@ -37,7 +37,7 @@ const SCHEMA = [
   section("Temperaturi, flacără și presiune", [
     entity("flame_power_entity", ["sensor"]),
     grid([text("flame_label"), box("flame_max", 0.5)]),
-    { name: "electric_border", selector: { boolean: {} } },
+    { name: "flame_glow", selector: { boolean: {} } },
     entity("flow_temp_entity", ["sensor"]),
     text("flow_temp_label"),
     entity("return_temp_entity", ["sensor"]),
@@ -82,7 +82,7 @@ const LABELS: Record<string, string> = {
   flame_power_entity: "Putere flacără (kW)",
   flame_label: "Nume casetă flacără",
   flame_max: "Putere maximă inel flacără (kW)",
-  electric_border: "Chenar electric animat când centrala cere căldură",
+  flame_glow: "Glow pe flacără când centrala cere căldură",
   flow_temp_entity: "Temperatură TUR",
   flow_temp_label: "Nume casetă TUR",
   return_temp_entity: "Temperatură RETUR",
