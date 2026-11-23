@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+<<<<<<< HEAD
 ## [Unreleased]
 
 ### Changed
@@ -15,6 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   still works).
 - Flow, return, outdoor and pressure values are right-aligned under their
   labels.
+=======
+## [1.0.1] - 2026-11-23
+
+### Changed
+
+- Removed the glow effects from the flame tile: the background glow while the
+  burner is lit, the drop-shadow on the power ring and flame icon, and the halo
+  and drop-shadow around the animated "electric" outline. The outline itself
+  and the flame flicker animation are unchanged.
+- Values on the flow, return, outdoor and pressure tiles are now right-aligned.
+>>>>>>> b96f05f4ac5403019cd0758bf592d23e7fcf21e0
 
 ## [1.0.0] - 2026-11-23
 
@@ -181,6 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inconsistent editor class naming between card and editor registrations.
 - Stale v1.0.0 bundle being served from a duplicate `dist/` copy.
 
+[1.0.1]: ../../compare/v1.0.0...v1.0.1
 [1.0.0]: ../../compare/v0.3.1...v1.0.0
 [0.3.1]: ../../compare/v0.3.0...v0.3.1
 [0.3.0]: ../../compare/v0.2.0...v0.3.0
