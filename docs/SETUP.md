@@ -181,8 +181,14 @@ explains broker setup, discovery, topics and entity naming.
 
 ## 5. Install and configure the card
 
-Install the card through HACS (add this repository as a Lovelace dashboard custom
-repository) or use the JavaScript bundle from a release:
+Install the card through HACS in one click:
+
+[![Open your Home Assistant instance and open this repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=phateks&repository=EBusD-ClasONE-card&category=plugin)
+
+The link opens this repository in your Home Assistant's HACS; click **Download** and
+reload the browser. You can also add it by hand in HACS (**⋮** → **Custom
+repositories**, type **Dashboard**). To install without HACS, use the JavaScript
+bundle from a release:
 
 1. Copy `ebusd-clasone-card.js` into Home Assistant's `/config/www/` directory.
 2. Add this dashboard resource:

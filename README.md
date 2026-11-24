@@ -5,6 +5,10 @@ controlling an **Ariston Clas One** through **ebusd** and MQTT.
 
 <p align="center"><img src="docs/preview.png" alt="EBusD Clas One Card on a phone, heating" width="440"></p>
 
+<p align="center">
+  <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=phateks&amp;repository=EBusD-ClasONE-card&amp;category=plugin"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open this repository in HACS"></a>
+</p>
+
 This repository covers the complete path from the eBUS interface to the dashboard:
 
 ```text
@@ -105,8 +109,26 @@ ebusd/MQTT setup.
 
 ## Install the card
 
-Install this repository as a Lovelace frontend card through HACS, or download
-`ebusd-clasone-card.js` from a release and add it as a JavaScript module resource:
+### One click (HACS)
+
+[![Open your Home Assistant instance and open this repository inside HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=phateks&repository=EBusD-ClasONE-card&category=plugin)
+
+The button opens your Home Assistant, adds this repository to HACS and shows its page.
+Click **Download**, then reload the browser. HACS registers the dashboard resource for
+you. This needs HACS and the My Home Assistant integration, which is part of
+`default_config`. The first time, the link asks for your Home Assistant address.
+
+### HACS, step by step
+
+1. In HACS, open the **⋮** menu → **Custom repositories**.
+2. Add `https://github.com/phateks/EBusD-ClasONE-card` with type **Dashboard**.
+3. Open the repository, click **Download**, then reload the browser.
+
+### Manual
+
+Download `ebusd-clasone-card.js` from the latest
+[release](https://github.com/phateks/EBusD-ClasONE-card/releases/latest), copy it to
+`/config/www/` and add it as a JavaScript module resource:
 
 ```yaml
 url: /local/ebusd-clasone-card.js
