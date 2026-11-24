@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.3] - 2026-11-24
 
 ### Added
 
@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   tile size. The card never gets shorter than its content. Without a height from
   outside, it keeps its natural size.
 - `height` field in the visual editor.
+
+### Changed
+
+- In a Sections dashboard the card now has a minimum of 4 rows, and the tiles
+  stretch to fill the rows set in the card's layout options. To match the height
+  of a neighbouring card, set the rows there (or `grid_options: rows: N` in YAML).
+- The values, the flame ring and the − / + buttons no longer have fixed sizes;
+  they scale with the tile. On small tiles some of them can be a little smaller
+  than in 1.0.2 (for example the flame ring is at least 54px instead of 66px).
 
 ## [1.0.2] - 2026-11-23
 
@@ -206,6 +215,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inconsistent editor class naming between card and editor registrations.
 - Stale v1.0.0 bundle being served from a duplicate `dist/` copy.
 
+[1.0.3]: ../../compare/v1.0.2...v1.0.3
 [1.0.2]: ../../compare/v1.0.1...v1.0.2
 [1.0.1]: ../../compare/v1.0.0...v1.0.1
 [1.0.0]: ../../compare/v0.3.1...v1.0.0
