@@ -72,12 +72,19 @@ before changing the config source.
   15 seconds, the write was not confirmed by ebusd.
 - Setpoint and offset buttons are disabled while their entity is
   unavailable, so the card never writes a value based on an unknown state.
-- The CH setpoint control is intentionally disabled while thermoregulation is on.
+- The CH setpoint control is intentionally disabled while thermoregulation is on;
+  the `AUTO` chip on the CH setpoint marks this state.
 - `EBUS OFFLINE` in the status badge means the status sensor is unavailable/unknown,
   or the optional `connection_entity` is off/unavailable. Check the ebusd app log and
   the adapter connection. Controls stay disabled while offline.
 - A red pressure tile means the value is outside `pressure_min`–`pressure_max`
   (default 1.0–2.5 bar). Adjust the thresholds if your installation uses other values.
+- If the flame ring fills too early or never fills, set `flame_max` to your boiler's
+  maximum power in kW.
+- If the card does not fill its Sections slot, or leaves empty space at the bottom,
+  check that the browser loaded the current bundle (see below). The card fills the
+  rows it is given but never gets shorter than its content; with too few rows it
+  stays at its minimum height and overlaps the space below.
 - If outdoor temperature is unavailable, use another HA temperature entity or verify
   the local `ext_temp` message. The included CSV has a `200f/7647` versus `2010/7647`
   comment/definition discrepancy; see the [entity reference](CLASONE_ENTITIES.md).

@@ -220,7 +220,8 @@ ch_consumption_entity: sensor.gaz_incalzire_zilnic
 
 The card's offset/DHW/CH min, max and step options control its − / + buttons; make
 them match the actual number entity's limits and the boiler's supported settings.
-While thermoregulation is on, the card disables the manual CH setpoint buttons.
+While thermoregulation is on, the card disables the manual CH setpoint buttons and
+shows an `AUTO` chip on the CH setpoint.
 
 The consumption entities are optional. They are usually daily `utility_meter`
 sensors built on the `gas_energy_ch` / `gas_energy_dhw` counters; see
