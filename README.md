@@ -95,7 +95,12 @@ pressure_label: PRESSURE
 | `consumption_label` / `consumption_decimals` | `CONSUM` / `1` | Title and decimals of the consumption box. |
 | `dhw_min` / `dhw_max` / `dhw_step` | entity attributes, else `36` / `60` / `1` | DHW setpoint range. |
 | `ch_min` / `ch_max` / `ch_step` | entity attributes, else `30` / `80` / `1` | CH setpoint range. |
+| `height` | automatic | Fixed card height, for example `360` or `360px`. The tiles inside stretch to fill it and the values, flame ring and buttons scale with them. The card never gets shorter than its content. |
 | `ch_switch_label`, `thermoreg_label`, `flame_label`, `offset_label`, `dhw_setpoint_label`, `ch_setpoint_label` | `CH`, `TERMOREGLARE`, `FLAME`, `OFFSET TERMOREGLARE`, `DHW SETPOINT`, `CH SETPOINT` | Label overrides. |
+
+In a Sections dashboard the card also fills the height the grid gives it. To match
+the height of a neighbouring card, set the rows in the card's layout options (or with
+`grid_options: rows: N` in YAML); there is no need to set `height` there.
 
 Without `connection_entity`, the card shows `EBUS OFFLINE` when the status sensor
 becomes unavailable or unknown. ebusd publishes its signal state on the MQTT topic

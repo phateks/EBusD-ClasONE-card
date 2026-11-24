@@ -19,6 +19,8 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   flame_power_entity?: string; // sensor.ebusd_boiler_flame_power_kw
   flame_label?: string;
   flame_max?: number; // full scale of the flame ring, kW (default 24)
+  /** Fixed card height, e.g. 360 or "360px". Inner tiles stretch to fill it. */
+  height?: number | string;
   flame_glow?: boolean; // soft glow on the flame tile during heat demand (default true)
   /** @deprecated since 1.0.1 — the electric outline was removed; `false` still turns the glow off. */
   electric_border?: boolean;

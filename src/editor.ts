@@ -22,7 +22,7 @@ const section = (title: string, schema: unknown[], expanded = false) => ({
 });
 
 const SCHEMA = [
-  text("title"),
+  grid([text("title"), text("height")]),
   section(
     "Status și conexiune",
     [
@@ -83,6 +83,7 @@ const LABELS: Record<string, string> = {
   flame_label: "Nume casetă flacără",
   flame_max: "Putere maximă inel flacără (kW)",
   flame_glow: "Glow pe flacără când centrala cere căldură",
+  height: "Înălțime card (ex. 360px; gol = automat)",
   flow_temp_entity: "Temperatură TUR",
   flow_temp_label: "Nume casetă TUR",
   return_temp_entity: "Temperatură RETUR",

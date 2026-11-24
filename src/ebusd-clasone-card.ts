@@ -106,7 +106,9 @@ export class EbusdClasOneCard extends LitElement {
 
   /** Sizing hint for the Sections dashboard layout. */
   public getGridOptions() {
-    return { columns: 12, min_columns: 6 };
+    // Rows are left to the dashboard: when the Sections grid gives the card a
+    // height, the inner tiles stretch to fill it.
+    return { columns: 12, min_columns: 6, min_rows: 4 };
   }
 
   public disconnectedCallback(): void {
@@ -285,8 +287,11 @@ export class EbusdClasOneCard extends LitElement {
     if (!this.config || !this.hass) return nothing;
     const offline = this.isOffline();
     const { kind } = this.statusInfo(offline);
+    const h = this.config.height;
+    const height =
+      h === undefined || h === "" ? "" : `height:${typeof h === "number" || /^\d+(\.\d+)?$/.test(String(h)) ? `${h}px` : h};`;
     return html`
-      <ha-card class="st-${kind}" style="--st:${STATUS_COLORS[kind]};">
+      <ha-card class="st-${kind}" style="--st:${STATUS_COLORS[kind]};${height}">
         ${this.renderHeader(offline)} ${this.renderFlowRow(kind)} ${this.renderControls(offline)}
       </ha-card>
     `;

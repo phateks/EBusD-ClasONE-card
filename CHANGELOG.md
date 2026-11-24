@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- The card fills the height it is given: the rows set in a Sections dashboard, or
+  the new `height` option (for example `height: 360px`). The inner tiles stretch
+  to fill it, and the values, the flame ring and the − / + buttons scale with the
+  tile size. The card never gets shorter than its content. Without a height from
+  outside, it keeps its natural size.
+- `height` field in the visual editor.
+
 ## [1.0.2] - 2026-11-23
 
 ### Added

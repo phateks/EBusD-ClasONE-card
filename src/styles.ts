@@ -2,7 +2,11 @@ import { css } from "lit";
 
 export const styles = css`
   :host {
-    display: block;
+    /* Fill the height the dashboard gives us (Sections rows); with no height
+       from outside this resolves to auto and the card keeps its natural size. */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     min-width: 0;
     container-name: boiler-card;
     container-type: inline-size;
@@ -57,6 +61,11 @@ export const styles = css`
     overflow: hidden;
     position: relative;
     font-variant-numeric: tabular-nums;
+    /* Grows to the host height but never shrinks below its content. */
+    flex: 1 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
   }
   /* Soft status glow in the top-left corner (CH = orange, DHW = teal). */
   ha-card::before {
@@ -87,6 +96,7 @@ export const styles = css`
 
   /* ---------- Header ---------- */
   .header {
+    flex: none;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -272,8 +282,9 @@ export const styles = css`
   .flow-row {
     display: grid;
     grid-template-columns: minmax(0, 0.85fr) repeat(2, minmax(0, 1fr));
-    grid-auto-rows: minmax(56px, auto);
+    grid-auto-rows: minmax(min-content, 1fr);
     gap: var(--bc-gap);
+    flex: 1 1 auto;
     margin-bottom: var(--bc-gap);
   }
   .flow-row > .unit { grid-column: 1; grid-row: 1 / span 2; }
@@ -284,6 +295,9 @@ export const styles = css`
   .flow-row > .tile-wide { grid-column: 2 / span 2; }
 
   .unit {
+    /* Size container: the ring and value scale with the tile height. */
+    container-type: size;
+    --ring: clamp(54px, min(52cqh, 75cqw), 130px);
     padding: 8px 6px;
     display: flex;
     flex-direction: column;
@@ -294,8 +308,8 @@ export const styles = css`
   .unit-text { display: flex; flex-direction: column; align-items: center; }
   .ring {
     position: relative;
-    width: 66px;
-    height: 66px;
+    width: var(--ring);
+    height: var(--ring);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -308,7 +322,7 @@ export const styles = css`
     stroke: var(--bc-ch);
     transition: stroke-dasharray 0.8s ease;
   }
-  .ring .flame { --mdc-icon-size: 25px; color: var(--bc-muted); transition: color 0.3s; }
+  .ring .flame { --mdc-icon-size: calc(var(--ring) * 0.38); color: var(--bc-muted); transition: color 0.3s; }
   .unit.burning .flame {
     color: var(--bc-ch);
     animation: flicker 1.2s ease-in-out infinite;
@@ -319,7 +333,7 @@ export const styles = css`
     60% { transform: scale(0.96) rotate(2deg); }
   }
   .unit .val {
-    font-size: 20px;
+    font-size: clamp(17px, 16cqh, 34px);
     font-weight: 700;
     color: var(--bc-txt);
     line-height: 1.1;
@@ -354,6 +368,8 @@ export const styles = css`
   /* ----- Sensor tiles ----- */
   .sensor-tile {
     --tile: var(--bc-sub);
+    container-type: size;
+    min-height: 56px;
     padding: 8px 10px;
     display: flex;
     flex-direction: column;
@@ -382,7 +398,7 @@ export const styles = css`
   .tile-value {
     align-self: flex-end;
     text-align: right;
-    font-size: 23px;
+    font-size: clamp(20px, min(40cqh, 24cqw), 40px);
     font-weight: 600;
     line-height: 1;
     color: var(--bc-txt);
@@ -432,12 +448,16 @@ export const styles = css`
   .controls {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: minmax(min-content, 1fr);
     gap: var(--bc-gap);
+    flex: 1 1 auto;
   }
   .controls.odd > :first-child { grid-column: 1 / -1; }
 
   .box {
     --bx: var(--bc-accent);
+    container-type: size;
+    min-height: 86px;
     padding: 8px 10px 11px;
     display: flex;
     flex-direction: column;
@@ -470,7 +490,7 @@ export const styles = css`
   .offset-box.disabled .sp-control,
   .offset-box.disabled .edge-bar { opacity: 0.4; }
   .offset-value {
-    font-size: 27px;
+    font-size: clamp(22px, min(32cqh, 18cqw), 46px);
     font-weight: 700;
     color: var(--bc-green);
     line-height: 1;
@@ -480,13 +500,18 @@ export const styles = css`
 
   .cons-box { --bx: var(--bc-accent); justify-content: flex-start; }
   .cons-total-val {
-    font-size: 18px;
+    font-size: clamp(18px, min(22cqh, 11cqw), 36px);
     font-weight: 700;
     line-height: 1;
     color: var(--bc-txt);
     white-space: nowrap;
   }
-  .cons-rows { display: flex; flex-direction: column; gap: 1px; margin: auto 0; }
+  .cons-rows {
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1px, 3cqh, 10px);
+    margin: auto 0;
+  }
   .split { display: flex; gap: 2px; }
   .split > span { position: static; display: block; height: 100%; transition: width 0.5s; }
   .split .dhw { background: var(--bc-dhw); }
@@ -496,7 +521,7 @@ export const styles = css`
     justify-content: space-between;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
+    font-size: clamp(13px, min(15cqh, 7.5cqw), 26px);
     border-radius: 7px;
     padding: 1px 4px;
     margin: 0 -4px;
@@ -507,10 +532,10 @@ export const styles = css`
     gap: 5px;
     color: var(--bc-sub);
     font-weight: 700;
-    font-size: 10.5px;
+    font-size: clamp(10.5px, min(12cqh, 6cqw), 19px);
     letter-spacing: 0.5px;
   }
-  .cons-name ha-icon { --mdc-icon-size: 15px; }
+  .cons-name ha-icon { --mdc-icon-size: clamp(15px, min(17cqh, 8.5cqw), 28px); }
   .cons-name.dhw ha-icon { color: var(--bc-dhw); }
   .cons-name.ch ha-icon { color: var(--bc-ch); }
   .cons-val { font-weight: 600; color: var(--bc-txt); white-space: nowrap; }
@@ -527,7 +552,7 @@ export const styles = css`
       var(--bc-surface);
   }
   .sp-val {
-    font-size: 30px;
+    font-size: clamp(24px, min(36cqh, 19cqw), 52px);
     font-weight: 700;
     line-height: 1;
     color: var(--bx);
@@ -541,14 +566,15 @@ export const styles = css`
   .sp-card.disabled .edge-bar { opacity: 0.45; }
 
   .sp-control {
+    flex: 1 1 auto;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 6px;
   }
   .step-btn {
-    width: 38px;
-    height: 38px;
+    width: clamp(32px, min(45cqh, 21cqw), 56px);
+    height: clamp(32px, min(45cqh, 21cqw), 56px);
     border-radius: 50%;
     background: var(--bc-btn-bg);
     border: none;
@@ -561,7 +587,7 @@ export const styles = css`
     padding: 0;
     transition: background 0.15s, transform 0.1s;
   }
-  .step-btn ha-icon { --mdc-icon-size: 20px; }
+  .step-btn ha-icon { --mdc-icon-size: clamp(18px, min(22cqh, 10cqw), 28px); }
   .step-btn:hover:not(:disabled) { background: var(--bc-btn-hover); }
   .step-btn:active:not(:disabled) { transform: scale(0.92); }
   .step-btn:disabled { opacity: 0.35; cursor: default; }
@@ -600,15 +626,14 @@ export const styles = css`
   @container boiler-card (max-width: 400px) {
     ha-card { padding: 10px; }
     :host { --bc-gap: 6px; }
-    .ring { width: 56px; height: 56px; }
-    .ring .flame { --mdc-icon-size: 22px; }
-    .unit .val { font-size: 17px; }
+    .unit { --ring: clamp(48px, min(46cqh, 70cqw), 110px); }
+    .unit .val { font-size: clamp(15px, 14cqh, 30px); }
     .sensor-tile { padding: 7px 8px; }
-    .tile-value { font-size: 20px; }
+    .tile-value { font-size: clamp(18px, min(36cqh, 22cqw), 34px); }
     .tile-label { font-size: 10px; letter-spacing: 0.4px; }
-    .sp-val { font-size: 25px; }
-    .offset-value { font-size: 23px; }
-    .step-btn { width: 34px; height: 34px; }
+    .sp-val { font-size: clamp(22px, min(32cqh, 18cqw), 46px); }
+    .offset-value { font-size: clamp(20px, min(28cqh, 16cqw), 40px); }
+    .step-btn { width: clamp(30px, min(40cqh, 20cqw), 50px); height: clamp(30px, min(40cqh, 20cqw), 50px); }
     .box { padding: 7px 8px 10px; }
     .box-title { font-size: 10px; letter-spacing: 0.4px; }
     .title-text { font-size: 14px; }
@@ -622,15 +647,19 @@ export const styles = css`
   @container boiler-card (min-width: 600px) {
     .flow-row {
       grid-template-columns: minmax(0, 1.25fr) repeat(4, minmax(0, 1fr));
-      grid-auto-rows: minmax(68px, auto);
+      grid-auto-rows: minmax(min-content, 1fr);
     }
+    .sensor-tile { min-height: 68px; }
     .flow-row > * { grid-row: 1 !important; grid-column: auto !important; }
     .flow-row > .tile-wide { grid-column: span 2 !important; }
-    .unit { flex-direction: row; gap: 8px; padding: 6px 10px; }
+    .unit {
+      --ring: clamp(46px, min(74cqh, 40cqw), 120px);
+      flex-direction: row;
+      gap: 8px;
+      padding: 6px 10px;
+    }
     .unit-text { align-items: flex-start; }
-    .ring { width: 54px; height: 54px; }
-    .ring .flame { --mdc-icon-size: 21px; }
-    .unit .val { margin-top: 0; }
+    .unit .val { margin-top: 0; font-size: clamp(17px, 30cqh, 36px); }
   }
 
   @container boiler-card (min-width: 780px) {
@@ -641,7 +670,5 @@ export const styles = css`
   @container boiler-card (min-width: 1000px) {
     :host { --bc-gap: 9px; }
     ha-card { padding: 14px; }
-    .tile-value { font-size: 26px; }
-    .sp-val { font-size: 32px; }
   }
 `;
