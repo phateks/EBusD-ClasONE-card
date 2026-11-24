@@ -3,7 +3,7 @@
 A Home Assistant Lovelace card and companion setup documentation for monitoring and
 controlling an **Ariston Clas One** through **ebusd** and MQTT.
 
-<p align="center"><img src="docs/preview.png" alt="EBusD Clas One Card on a phone, heating" width="440"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/phateks/EBusD-ClasONE-card/main/docs/preview.png" alt="EBusD Clas One Card on a phone, heating" width="440"></p>
 
 <p align="center">
   <a href="https://my.home-assistant.io/redirect/hacs_repository/?owner=phateks&amp;repository=EBusD-ClasONE-card&amp;category=plugin"><img src="https://my.home-assistant.io/badges/hacs_repository.svg" alt="Open this repository in HACS"></a>
@@ -32,7 +32,7 @@ create boiler entities. Those parts must be set up and verified first.
 
 ## What the card does
 
-<p align="center"><img src="docs/images/desktop.png" alt="The card on a wide dashboard: sensors and controls on one row each" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/phateks/EBusD-ClasONE-card/main/docs/images/desktop.png" alt="The card on a wide dashboard: sensors and controls on one row each" width="100%"></p>
 
 ### Header
 
@@ -76,7 +76,7 @@ create boiler entities. Those parts must be set up and verified first.
 
 ### States at a glance
 
-<p align="center"><img src="docs/images/states.png" alt="Four cards: CH heating, DHW heating, standby with low pressure alarm, eBUS offline" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/phateks/EBusD-ClasONE-card/main/docs/images/states.png" alt="Four cards: CH heating, DHW heating, standby with low pressure alarm, eBUS offline" width="100%"></p>
 
 ## Layout and sizing
 
@@ -95,13 +95,13 @@ stretch to fill the space and the values, the flame ring, the consumption text a
 the − / + buttons scale with them. The card never gets shorter than its content, and
 without a height from outside it keeps its natural size.
 
-<p align="center"><img src="docs/images/height.png" alt="The same card at natural height and stretched to a taller Sections slot" width="100%"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/phateks/EBusD-ClasONE-card/main/docs/images/height.png" alt="The same card at natural height and stretched to a taller Sections slot" width="100%"></p>
 
 The card follows the Home Assistant light or dark theme. Its tiles are translucent
 tints over the card background, so a transparent theme or card_mod background
 carries through to them. Animations stop when the system asks for reduced motion.
 
-<p align="center"><img src="docs/images/light.png" alt="The card with a light Home Assistant theme" width="440"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/phateks/EBusD-ClasONE-card/main/docs/images/light.png" alt="The card with a light Home Assistant theme" width="440"></p>
 
 All entities can be selected in the visual editor or set in YAML, and all visible
 labels can be changed. Values and controls depend on the entities exposed by your
