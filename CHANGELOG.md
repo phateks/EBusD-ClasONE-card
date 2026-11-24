@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-11-24
+
+This release changes only the documentation. The card's code and behaviour are the
+same as in 1.0.3; the bundle differs only in the version it reports.
+
+### Added
+
+- "Open in HACS" button in the README and in the setup guide, to add the repository
+  to HACS in one click.
+- Screenshots in the README: wide (desktop) layout, the four states (CH heating, DHW
+  heating, standby with a low pressure alarm, eBUS offline), a card stretched to a
+  taller Sections slot, and the light theme.
+- README sections that describe every part of the card (header, sensors, controls),
+  the layout at each card width, and how the card fills a given height.
+- Documentation for the `flame_max` and `flame_glow` options and for the
+  `flow_temp_label`, `return_temp_label`, `outdoor_temp_label` and `pressure_label`
+  label overrides.
+- Troubleshooting entries for a flame ring that fills too early or never fills, and
+  for a card that does not fill its Sections slot.
+
+### Changed
+
+- Installation instructions split into one click (HACS), HACS step by step, and
+  manual install.
+- New, smaller preview image.
+- The setup guide and troubleshooting page mention the `AUTO` chip on the CH setpoint
+  while thermoregulation is on.
+
+### Fixed
+
+- README images now use absolute URLs, so they also show on the repository page in
+  HACS.
+- The gas consumption section described a TOTAL row; the total is shown in the corner
+  of the consumption box.
+
 ## [1.0.3] - 2026-11-24
 
 ### Added
@@ -215,6 +250,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Inconsistent editor class naming between card and editor registrations.
 - Stale v1.0.0 bundle being served from a duplicate `dist/` copy.
 
+[1.1.0]: ../../compare/v1.0.3...v1.1.0
 [1.0.3]: ../../compare/v1.0.2...v1.0.3
 [1.0.2]: ../../compare/v1.0.1...v1.0.2
 [1.0.1]: ../../compare/v1.0.0...v1.0.1
