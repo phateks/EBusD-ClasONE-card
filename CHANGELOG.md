@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-11-25
+
+### Added
+
+- Optional `SLOPE` chip at the right end of the title row, showing the heating
+  curve slope read from the boiler. Clicking it opens a small − / + control; the
+  new value is written 0.7 s after the last click (like the offset) and stays
+  dimmed until the boiler reports it back. Click outside the control or press Esc
+  to close it.
+- New options `slope_entity` (writable number), `slope_display_entity` (sensor
+  that reads the slope from the bus), `slope_label`, `slope_min`, `slope_max` and
+  `slope_step`. The range and step come from the entity, or default to 0.4–3.5,
+  step 0.1. Without `slope_entity` the chip only shows the value and a click opens
+  the entity's more-info dialog.
+- The slope fields in the visual editor.
+- Reference `clas_one.csv`: `z1_heat_slope_set` writes the slope on `2020/6a71`
+  (boiler parameter 4.2.2, tested on the boiler).
+- Documentation: the slope options in the README, the slope entities in
+  `CLASONE_ENTITIES.md`, and the `mqtt-hassio.cfg` changes that publish the slope
+  and the offset as HA `number` entities with the right min / max / step.
+
+### Changed
+
+- Reference `clas_one.csv`: `z1_heat_offset_set` no longer has a `°C` unit.
+
+### Fixed
+
+- Reference `clas_one.csv`: `z1_heat_slope` now reads the slope from the
+  `2020/6a71` broadcast, as confirmed on the boiler, instead of `200e/6473`.
+
 ## [1.1.0] - 2026-11-24
 
 This release changes only the documentation. The card's code and behaviour are the
@@ -250,6 +280,7 @@ same as in 1.0.3; the bundle differs only in the version it reports.
 - Inconsistent editor class naming between card and editor registrations.
 - Stale v1.0.0 bundle being served from a duplicate `dist/` copy.
 
+[1.2.0]: ../../compare/v1.1.0...v1.2.0
 [1.1.0]: ../../compare/v1.0.3...v1.1.0
 [1.0.3]: ../../compare/v1.0.2...v1.0.3
 [1.0.2]: ../../compare/v1.0.1...v1.0.2
