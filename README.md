@@ -41,6 +41,11 @@ create boiler entities. Those parts must be set up and verified first.
   boiler icon and a soft glow in the card corner take the status colour, and the dot
   pulses while the boiler is heating. Click the badge to open the status entity (or
   `connection_entity` while offline).
+- **SLOPE chip** at the right end of the title row (optional): shows the heating
+  curve slope read from the boiler. Click it to open a small − / + control
+  (step 0.1, range from the entity, 0.4–3.5 by default); the value is written to the
+  boiler 0.7 s after the last click and stays dimmed until the boiler reports it back.
+  Click outside the control or press Esc to close it.
 - **CH** and **TERMOREGLARE** switches, shown as pills with a small toggle. Click to
   switch; an unavailable switch is dimmed and cannot be clicked.
 
@@ -157,6 +162,8 @@ outdoor_temp_entity: sensor.ebusd_boiler_ext_temp
 pressure_entity: sensor.ebusd_boiler_boiler_pressure
 offset_entity: number.ebusd_boiler_z1_heat_offset_set
 computed_setpoint_entity: sensor.ebusd_boiler_ch_flow_setpoint
+slope_entity: number.ebusd_boiler_z1_heat_slope_set
+slope_display_entity: sensor.ebusd_boiler_z1_heat_slope
 dhw_setpoint_entity: number.ebusd_boiler_dhw_comfort_temp_set
 dhw_setpoint_display_entity: sensor.ebusd_boiler_dhw_current_target_temp
 ch_setpoint_entity: number.ebusd_boiler_z1_heat_setpoint_set
@@ -175,6 +182,8 @@ pressure_label: PRESSURE
 | `connection_entity` | none | Entity that is `on` while ebusd has an eBUS signal. When it is off or unavailable, the status badge shows `EBUS OFFLINE`. |
 | `pressure_min` / `pressure_max` | `1.0` / `2.5` | The pressure tile turns red outside this range (bar). |
 | `offset_min` / `offset_max` / `offset_step` | `-14` / `14` / `2` | Offset range and step for the − / + buttons. The starting value is read from `offset_entity`. |
+| `slope_entity` / `slope_display_entity` | none | Writable slope number and the sensor that reads the slope from the bus. When set, the `SLOPE` chip appears in the header. Without `slope_entity` the chip only shows the value and opens the entity on click. |
+| `slope_label` / `slope_min` / `slope_max` / `slope_step` | `SLOPE` / entity attributes, else `0.4` / `3.5` / `0.1` | Chip text and slope range. |
 | `dhw_consumption_entity` / `ch_consumption_entity` | none | Sensors for DHW and CH consumption. When at least one is set, a consumption box appears next to the offset box with DHW, CH and their total. Without them, the offset box takes the full width. The unit comes from the sensor (`kW` if missing). |
 | `consumption_label` / `consumption_decimals` | `CONSUM` / `1` | Title and decimals of the consumption box. |
 | `dhw_min` / `dhw_max` / `dhw_step` | entity attributes, else `36` / `60` / `1` | DHW setpoint range. |

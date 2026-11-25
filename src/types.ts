@@ -40,6 +40,14 @@ export interface BoilerCardConfig extends LovelaceCardConfig {
   offset_step?: number; // 2
   computed_setpoint_entity?: string; // sensor.ebusd_boiler_ch_flow_setpoint
 
+  // Heating curve slope: chip in the header, click opens a - / + control
+  slope_entity?: string; // number.ebusd_boiler_z1_heat_slope_set (control)
+  slope_display_entity?: string; // sensor.ebusd_boiler_z1_heat_slope (value read from the boiler)
+  slope_label?: string;
+  slope_min?: number; // 0.4
+  slope_max?: number; // 3.5
+  slope_step?: number; // 0.1
+
   // Consumption box (optional). Shown next to the offset box when at least one
   // entity is set; otherwise the offset box keeps the full width.
   dhw_consumption_entity?: string;
@@ -85,7 +93,9 @@ export const DEFAULTS = {
   ch_setpoint_label: "CH SETPOINT",
   consumption_label: "CONSUM",
   consumption_decimals: 1,
+  slope_label: "SLOPE",
   offset: { min: -14, max: 14, step: 2 },
+  slope: { min: 0.4, max: 3.5, step: 0.1 },
   dhw: { min: 36, max: 60, step: 1 },
   ch: { min: 30, max: 80, step: 1 },
   pressure_min: 1.0,

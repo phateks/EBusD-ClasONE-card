@@ -53,6 +53,10 @@ const SCHEMA = [
     text("offset_label"),
     entity("computed_setpoint_entity", ["sensor"]),
     grid([box("offset_min"), box("offset_max"), box("offset_step")]),
+    entity("slope_entity", ["number", "input_number"]),
+    entity("slope_display_entity", ["sensor", "number", "input_number"]),
+    text("slope_label"),
+    grid([box("slope_min", 0.1), box("slope_max", 0.1), box("slope_step", 0.1)]),
   ]),
   section("Consum (opțional)", [
     entity("dhw_consumption_entity", ["sensor"]),
@@ -100,6 +104,12 @@ const LABELS: Record<string, string> = {
   offset_min: "Offset min",
   offset_max: "Offset max",
   offset_step: "Offset pas",
+  slope_entity: "Pantă curbă (number, control)",
+  slope_display_entity: "Pantă curbă (afișaj, senzor)",
+  slope_label: "Text chip pantă",
+  slope_min: "Pantă min",
+  slope_max: "Pantă max",
+  slope_step: "Pantă pas",
   dhw_consumption_entity: "Consum DHW (sensor)",
   ch_consumption_entity: "Consum CH (sensor)",
   consumption_label: "Titlu casetă consum",
@@ -124,6 +134,9 @@ const HELPERS: Record<string, string> = {
   offset_min: `Gol = implicit ${DEFAULTS.offset.min} / ${DEFAULTS.offset.max}, pas ${DEFAULTS.offset.step}.`,
   dhw_consumption_entity:
     "Dacă nu setezi niciun senzor de consum, caseta nu apare și offset-ul ocupă tot rândul. Totalul = DHW + CH.",
+  slope_entity:
+    "Apare ca chip în dreapta titlului; click deschide controlul − / +. Afișajul arată valoarea citită de la centrală.",
+  slope_min: `Gol = valoarea din entitate (implicit ${DEFAULTS.slope.min}–${DEFAULTS.slope.max}, pas ${DEFAULTS.slope.step}).`,
   dhw_min: "Gol = valoarea din entitate.",
   ch_min: "Gol = valoarea din entitate.",
 };

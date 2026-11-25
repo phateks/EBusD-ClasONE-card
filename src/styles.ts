@@ -169,6 +169,56 @@ export const styles = css`
     50% { opacity: 0.55; }
   }
 
+  /* Heating curve slope: chip at the right end of the title row + popover */
+  .slope-wrap {
+    position: relative;
+    margin-left: auto;
+    flex-shrink: 0;
+    z-index: 3;
+  }
+  .slope-chip {
+    cursor: pointer;
+    user-select: none;
+    gap: 4px;
+    padding: 2px 9px 2px 7px;
+    border: 1px solid transparent;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .slope-chip b { color: var(--bc-green); font-weight: 800; }
+  .slope-chip ha-icon { color: var(--bc-green); }
+  .slope-chip:hover,
+  .slope-chip.open {
+    background: color-mix(in srgb, var(--bc-green) 14%, transparent);
+    border-color: color-mix(in srgb, var(--bc-green) 30%, transparent);
+  }
+  .slope-chip.pending b { opacity: 0.55; }
+  .slope-chip:focus-visible { outline: 2px solid var(--bc-accent); outline-offset: 2px; }
+  .slope-pop {
+    position: absolute;
+    top: calc(100% + 6px);
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: var(--bc-tile-radius);
+    background: var(--ha-card-background, var(--card-background-color, #16243a));
+    background-image: linear-gradient(var(--bc-surface-hi), var(--bc-surface-hi));
+    border: 1px solid var(--bc-border);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+  .slope-pop .step-btn { width: 36px; height: 36px; }
+  .slope-pop .step-btn ha-icon { --mdc-icon-size: 20px; }
+  .slope-pop-val {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 3.2em;
+  }
+  .slope-pop-val .v { font-size: 24px; font-weight: 700; color: var(--bc-green); line-height: 1.05; }
+  .slope-pop-val .v.pending { opacity: 0.55; }
+  .slope-pop-val .r { font-size: 9.5px; color: var(--bc-sub); letter-spacing: 0.4px; }
+
   /* Toggle pills with a mini switch */
   .badge {
     --tg: var(--bc-sub);

@@ -28,6 +28,8 @@ weather integration rather than ebusd.
 | `outdoor_temp_entity` | `ext_temp` in the provided profile, or another HA sensor | Optional outdoor temperature. The card displays one decimal and `°C`. The current CSV's active message ID conflicts with its comments; verify it before relying on it. |
 | `pressure_entity` | `boiler_pressure` | Boiler/system pressure in bar. |
 | `offset_entity` | `z1_heat_offset_set` write control and the corresponding offset read/broadcast definition | Thermoregulation offset control with − / + buttons. The card starts from the entity's current value and uses `offset_min`/`offset_max`/`offset_step` (default -14/+14/2). Select the actual writable number entity. |
+| `slope_entity` | `z1_heat_slope_set` | Writable heating curve slope (boiler parameter 4.2.2). Shown as the `SLOPE` chip in the header; a click opens − / + buttons. Range and step come from the entity (0.4–3.5, step 0.1 with the provided MQTT settings). |
+| `slope_display_entity` | `z1_heat_slope` | Slope value read from the bus (broadcast `2020/6a71`). Updates both when the slope is changed on the boiler and when it is written from Home Assistant. |
 | `computed_setpoint_entity` | `ch_flow_setpoint` | Computed CH flow target in °C; shown beside the OFFSET title while thermoregulation is on. |
 | `dhw_setpoint_entity` | `dhw_comfort_temp_set` | Writable DHW comfort target. The card's +/- controls call `number.set_value`. |
 | `dhw_setpoint_display_entity` | `dhw_current_target_temp` or another sensor/number | Optional display fallback if the writable DHW entity has no numeric state. |
@@ -92,7 +94,37 @@ MQTT discovery rather than inferred from an entity ID.
 | `z1_heat_water_min_temp_set` | Zone 1 minimum heating-water temperature |
 | `z1_heat_therm_type` | Thermoregulation type/mode |
 | `z1_heat_offset_set` | Writable zone 1 offset used by the card |
-| `z1_heat_offset` | Corresponding broadcast/read offset value |
+| `z1_heat_offset` | Corresponding broadcast/read offset value (no unit) |
+| `z1_heat_slope_set` | Writable zone 1 heating curve slope (`2020/6a71`, value ×100) |
+| `z1_heat_slope` | Zone 1 heating curve slope as broadcast on the bus (`2020/6a71`), from the boiler or from ebusd's own writes |
+
+To publish the slope and offset as HA `number` entities with sensible limits, the
+`mqtt-hassio.cfg` used by ebusd needs two custom number types. Add the two mapping
+lines at the top of `type_switch-w-number`:
+
+```
+type_switch-w-number =
+    number,,,sloperange = slope_set
+    number,,,offsetrange = offset_set
+    ...
+```
+
+and define the two parts **before** the `type_part-sensor` line (ebusd ignores them
+when they come after `field_payload`):
+
+```
+type_part-numbersloperange = ,
+  "command_topic":"%topic/set",
+  "min":0.4,
+  "max":3.5,
+  "step":0.1%unit_of_measurement%state_class%type_class_number
+
+type_part-numberoffsetrange = ,
+  "command_topic":"%topic/set",
+  "min":-14,
+  "max":14,
+  "step":1%unit_of_measurement%state_class%type_class_number
+```
 
 These definitions can issue commands to the boiler. Confirm that the setpoint ranges
 and entity services match your installation before exposing them to users or automations.

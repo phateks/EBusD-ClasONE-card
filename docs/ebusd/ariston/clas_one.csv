@@ -158,10 +158,13 @@ w,boiler,z1_heat_water_min_temp_set,Z1 Min Water Temp,,fe,2020,6171,,s,SIN,10,°
 b,boiler,z1_heat_therm_type,Z1 Therm Type,,fe,200e,C079,,,UCH,0=fixed_temp;1=on_off_device;2=room_probe_only;3=outdoor_probe_only;4=outdoor_and_room
 w,boiler,z1_heat_therm_type,Z1 Therm Type,,fe,2020,C079,,s,UCH,0=fixed_temp;1=on_off_device;2=room_probe_only;3=outdoor_probe_only;4=outdoor_and_room
 
-b,boiler,z1_heat_slope,Z1 Heat Slope,37,fe,200e,6473,ign,,IGN:4,,,,,,UIN,100
+# Panta curbei Z1 - 6a71 (x100). Confirmat 25.11.2026: centrala anunta valoarea in broadcast 2020/6a71,
+# iar scrierea 2020/6a71 schimba parametrul 4.2.2 (testat 1.4 -> 1.3). Interval 0.40-3.50.
+b,boiler,z1_heat_slope,Z1 Heat Slope,,fe,2020,6a71,,,UIN,100
+w,boiler,z1_heat_slope_set,Z1 Heat Slope,,fe,2020,6a71,,s,UIN,100
 
 # Offset write - pereche cu broadcast z1_heat_thermoreg (camp 0 = offset)
-w,boiler,z1_heat_offset_set,Z1 Heat Offset,,fe,2020,6471,,s,SIN,10,°C
+w,boiler,z1_heat_offset_set,Z1 Heat Offset,,fe,2020,6471,,s,SIN,10
 b,boiler,z1_heat_offset,Z1 Heat Offset,37,fe,200e,6471,,,SIN,10
 
 # Definit ca circuit "boilerslope" ca sa evite duplicatele

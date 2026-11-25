@@ -65,6 +65,8 @@ export class EbusdClasOneCard extends LitElement {
   @state() private config!: BoilerCardConfig;
   /** Optimistic values for writable numbers, keyed by entity id. */
   @state() private pending: Record<string, Pending> = {};
+  /** Slope popover (header chip) open. */
+  @state() private slopeOpen = false;
 
   public static styles = styles;
 
@@ -111,8 +113,27 @@ export class EbusdClasOneCard extends LitElement {
     return { columns: 12, min_columns: 6, min_rows: 4 };
   }
 
+  /** Close the slope popover on a click outside it or on Escape. */
+  private onDocClick = (e: Event) => {
+    if (!this.slopeOpen) return;
+    const wrap = this.renderRoot.querySelector(".slope-wrap");
+    if (wrap && !e.composedPath().includes(wrap)) this.slopeOpen = false;
+  };
+  private onDocKey = (e: KeyboardEvent) => {
+    if (e.key === "Escape" && this.slopeOpen) this.slopeOpen = false;
+  };
+
+  public connectedCallback(): void {
+    super.connectedCallback();
+    document.addEventListener("click", this.onDocClick, true);
+    document.addEventListener("keydown", this.onDocKey);
+  }
+
   public disconnectedCallback(): void {
     super.disconnectedCallback();
+    document.removeEventListener("click", this.onDocClick, true);
+    document.removeEventListener("keydown", this.onDocKey);
+    this.slopeOpen = false;
     for (const p of Object.values(this.pending)) if (p.timer) clearTimeout(p.timer);
     this.pending = {};
   }
@@ -132,6 +153,8 @@ export class EbusdClasOneCard extends LitElement {
       c.pressure_entity,
       c.offset_entity,
       c.computed_setpoint_entity,
+      c.slope_entity,
+      c.slope_display_entity,
       c.dhw_consumption_entity,
       c.ch_consumption_entity,
       c.dhw_setpoint_entity,
@@ -156,7 +179,7 @@ export class EbusdClasOneCard extends LitElement {
     // Drop optimistic values once the boiler reports them back.
     let next: Record<string, Pending> | undefined;
     for (const [id, p] of Object.entries(this.pending)) {
-      if (p.sent && this.num(id) === p.value) {
+      if (p.sent && this.num(this.confirmEntity(id)) === p.value) {
         next = next ?? { ...this.pending };
         delete next[id];
       }
@@ -171,6 +194,11 @@ export class EbusdClasOneCard extends LitElement {
   }
 
   // ---------- helpers ----------
+  /** Entity whose state confirms a write to `id` (the slope is read back from its sensor). */
+  private confirmEntity(id: string): string {
+    const c = this.config;
+    return id === c.slope_entity && c.slope_display_entity ? c.slope_display_entity : id;
+  }
   private darkMode(hass: HomeAssistant): boolean | undefined {
     return (hass.themes as unknown as { darkMode?: boolean } | undefined)?.darkMode;
   }
@@ -333,6 +361,7 @@ export class EbusdClasOneCard extends LitElement {
                   : html`<span class="status-dot ${active ? "live" : ""}"></span>`}${label}
               </div>`
             : nothing}
+          ${this.renderSlope(offline)}
         </div>
 
         <div class="header-controls">
@@ -353,6 +382,63 @@ export class EbusdClasOneCard extends LitElement {
               )
             : nothing}
         </div>
+      </div>
+    `;
+  }
+
+  /** Header chip "SLOPE 1.4"; a click opens a small - / + popover. */
+  private renderSlope(offline: boolean): TemplateResult | typeof nothing {
+    const c = this.config;
+    const id = c.slope_entity;
+    const show = c.slope_display_entity ?? id;
+    if (!id && !show) return nothing;
+    const lim = this.limits(id, c.slope_min, c.slope_max, c.slope_step, DEFAULTS.slope);
+    const digits = Math.max(1, this.decimals(lim.step));
+    const pending = id ? this.pending[id] : undefined;
+    // Start from the value the boiler reports; never write from an unknown state.
+    const current = this.num(show) ?? this.num(id);
+    const shown = pending?.value ?? current;
+    const canSet = !!id && !offline && this.available(id) && current !== undefined;
+    const label = c.slope_label ?? DEFAULTS.slope_label;
+    const valStr = shown === undefined ? "--" : shown.toFixed(digits);
+    const change = (delta: number) => {
+      if (!id || !canSet || shown === undefined) return;
+      const raw = Math.min(lim.max, Math.max(lim.min, shown + delta));
+      const next = parseFloat(raw.toFixed(digits));
+      if (next === shown) return;
+      this.queueNumber(id, next, SETPOINT_DEBOUNCE_MS);
+    };
+    const toggle = () => {
+      if (id) this.slopeOpen = !this.slopeOpen;
+      else this.moreInfo(show);
+    };
+    return html`
+      <div class="slope-wrap">
+        <div
+          class="chip slope-chip ${this.slopeOpen ? "open" : ""} ${pending ? "pending" : ""}"
+          role="button"
+          tabindex="0"
+          aria-expanded=${this.slopeOpen ? "true" : "false"}
+          title="Panta curbei de încălzire"
+          @click=${toggle}
+          @keydown=${this.onKey(toggle)}
+        >
+          <ha-icon icon="mdi:chart-line-variant"></ha-icon>${label}: <b>${valStr}</b>
+        </div>
+        ${this.slopeOpen && id
+          ? html`<div class="slope-pop" role="dialog" aria-label=${label}>
+              ${this.stepBtn(label, -1, !canSet || (shown !== undefined && shown <= lim.min), () =>
+                change(-lim.step)
+              )}
+              <div class="slope-pop-val">
+                <span class="v ${pending ? "pending" : ""}">${valStr}</span>
+                <span class="r">${lim.min.toFixed(1)}–${lim.max.toFixed(1)}</span>
+              </div>
+              ${this.stepBtn(label, 1, !canSet || (shown !== undefined && shown >= lim.max), () =>
+                change(lim.step)
+              )}
+            </div>`
+          : nothing}
       </div>
     `;
   }
